@@ -338,26 +338,16 @@
       transition: transform 0.18s ease;
     }
 
-    .rate-switch-label {
+    .rate-switch-label-center {
       position: absolute;
       top: 50%;
-      transform: translateY(-50%);
-      font-size: 10px;
-      color: rgba(255,255,255,0.8);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 11px;
+      color: rgba(255,255,255,0.9);
       pointer-events: none;
-      transition: opacity 0.18s ease, font-weight 0.18s ease;
-    }
-
-    .rate-switch-label-left {
-      left: 10px;
-      opacity: 1;
       font-weight: 600;
-    }
-
-    .rate-switch-label-right {
-      right: 8px;
-      opacity: 0.45;
-      font-weight: 400;
+      letter-spacing: 0.08em;
     }
 
     /* checked = 自訂匯率 */
@@ -367,16 +357,6 @@
 
     .rate-switch input:checked + .rate-switch-track .rate-switch-thumb {
       transform: translateX(40px);
-    }
-
-    .rate-switch input:checked + .rate-switch-track .rate-switch-label-left {
-      opacity: 0.45;
-      font-weight: 400;
-    }
-
-    .rate-switch input:checked + .rate-switch-track .rate-switch-label-right {
-      opacity: 1;
-      font-weight: 600;
     }
 
     .rate-body {
@@ -843,13 +823,12 @@
               <span>匯率試算</span>
             </div>
 
-            <!-- 右上角左右開關：左=即時，右=自訂 -->
+            <!-- 右上角左右開關 -->
             <label class="rate-switch">
               <input type="checkbox" id="rateModeToggle" />
               <span class="rate-switch-track">
                 <span class="rate-switch-thumb"></span>
-                <span class="rate-switch-label rate-switch-label-left">即時</span>
-                <span class="rate-switch-label rate-switch-label-right">自訂</span>
+                <span class="rate-switch-label-center" id="rateSwitchLabel">自訂</span>
               </span>
             </label>
           </div>
@@ -1210,6 +1189,7 @@
     const customRateRow = document.getElementById("customRateRow");
     const customRateInput = document.getElementById("customRateInput");
     const rateModeToggle = document.getElementById("rateModeToggle");
+    const rateSwitchLabel = document.getElementById("rateSwitchLabel");
 
     // liveRateTWDToKRW：1 TWD 可換多少 KRW（即時）
     let liveRateTWDToKRW = 45.0;
@@ -1223,9 +1203,34 @@
         rateText.textContent =
           "目前使用即時匯率：約 1 TWD ≈ " + rateTWDToKRW.toFixed(2) + " KRW";
       } else {
-        rateText.textContent =
-          "目前使用自訂匯率：1 TWD ≈ " + rateTWDToKRW.toFixed(2) + " KRW";
+        // 自訂模式：不顯示文字
+        rateText.textContent = "";
       }
+    }
+
+    function updateSwitchLabel() {
+      // live 模式 → 切換鈕上只顯示「自訂」
+      // custom 模式 → 切換鈕上只顯示「即時」
+      if (rateMode === "live") {
+        rateSwitchLabel.textContent = "自訂";
+      } else {
+        rateSwitchLabel.textContent = "即時";
+      }
+    }
+
+    function applyModeUI() {
+      if (rateMode === "live") {
+        customRateRow.style.display = "none";
+        rateText.style.display = "block";
+        refreshRateBtn.style.display = "inline-flex";
+      } else {
+        customRateRow.style.display = "flex";
+        rateText.style.display = "none";      // 完全不顯示
+        refreshRateBtn.style.display = "none";
+      }
+      updateRateText();
+      updateSwitchLabel();
+      recalcFromInputs();
     }
 
     function recalcFromInputs() {
@@ -1264,8 +1269,8 @@
             updateRateText();
             recalcFromInputs();
           } else {
-            rateText.textContent =
-              "已更新即時匯率（目前為自訂模式，未套用）。";
+            // 自訂模式不顯示文字
+            rateText.textContent = "";
           }
         } else {
           rateText.textContent = "匯率載入失敗，使用預設匯率。";
@@ -1278,27 +1283,19 @@
 
     // 初次載入：抓一次即時匯率
     fetchRate();
-    updateRateText();
+    applyModeUI();
 
-    // 手動重新抓匯率
+    // 手動重新抓匯率（只在即時模式顯示）
     refreshRateBtn.addEventListener("click", () => {
       fetchRate();
     });
 
     // 模式切換：switch 左右（未勾=即時，勾選=自訂）
     rateModeToggle.addEventListener("change", () => {
-      const mode = rateModeToggle.checked ? "custom" : "live";
-      if (mode === rateMode) return;
+      rateMode = rateModeToggle.checked ? "custom" : "live";
 
-      rateMode = mode;
-
-      if (rateMode === "live") {
-        customRateRow.style.display = "none";
-        rateTWDToKRW = liveRateTWDToKRW;
-        updateRateText();
-        recalcFromInputs();
-      } else {
-        customRateRow.style.display = "flex";
+      if (rateMode === "custom") {
+        // 切到自訂，帶入目前 live 當預設
         if (!customRateInput.value) {
           customRateInput.value = liveRateTWDToKRW.toFixed(2);
         }
@@ -1306,9 +1303,12 @@
         if (!isNaN(v) && v > 0) {
           rateTWDToKRW = v;
         }
-        updateRateText();
-        recalcFromInputs();
+      } else {
+        // 切回即時
+        rateTWDToKRW = liveRateTWDToKRW;
       }
+
+      applyModeUI();
     });
 
     // 自訂匯率輸入變化（1 TWD = ? KRW）
@@ -1316,11 +1316,10 @@
       if (rateMode !== "custom") return;
       const v = parseFloat(customRateInput.value);
       if (isNaN(v) || v <= 0) {
-        rateText.textContent = "請輸入有效的自訂匯率（1 TWD ≈ ? KRW）。";
+        // 自訂模式不顯示提示文字，所以不用 error message
         return;
       }
       rateTWDToKRW = v;
-      updateRateText();
       recalcFromInputs();
     });
 
