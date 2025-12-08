@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <title>K-TRIP MATE Prototype</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 鎖定縮放 -->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
 
   <style>
     /* -----------------------
@@ -318,7 +322,7 @@
 
     .rate-switch-track {
       position: relative;
-      width: 70px;
+      width: 72px;
       height: 26px;
       border-radius: 999px;
       background: color-mix(in srgb, #000 16%, var(--card-bg));
@@ -338,16 +342,27 @@
       transition: transform 0.18s ease;
     }
 
-    .rate-switch-label-center {
+    .rate-switch-label {
       position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateY(-50%);
       font-size: 11px;
       color: rgba(255,255,255,0.9);
       pointer-events: none;
       font-weight: 600;
       letter-spacing: 0.08em;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .rate-switch-label-left {
+      left: 8px;
+      text-align: left;
+    }
+
+    .rate-switch-label-right {
+      right: 8px;
+      text-align: right;
     }
 
     /* checked = 自訂匯率 */
@@ -356,7 +371,7 @@
     }
 
     .rate-switch input:checked + .rate-switch-track .rate-switch-thumb {
-      transform: translateX(40px);
+      transform: translateX(42px);
     }
 
     .rate-body {
@@ -823,12 +838,19 @@
               <span>匯率試算</span>
             </div>
 
-            <!-- 右上角左右開關 -->
+            <!-- 右上角左右開關：左=即時，右=自訂 -->
             <label class="rate-switch">
               <input type="checkbox" id="rateModeToggle" />
               <span class="rate-switch-track">
                 <span class="rate-switch-thumb"></span>
-                <span class="rate-switch-label-center" id="rateSwitchLabel">自訂</span>
+                <span
+                  class="rate-switch-label rate-switch-label-left"
+                  id="labelLive"
+                >即時</span>
+                <span
+                  class="rate-switch-label rate-switch-label-right"
+                  id="labelCustom"
+                >自訂</span>
               </span>
             </label>
           </div>
@@ -1189,7 +1211,8 @@
     const customRateRow = document.getElementById("customRateRow");
     const customRateInput = document.getElementById("customRateInput");
     const rateModeToggle = document.getElementById("rateModeToggle");
-    const rateSwitchLabel = document.getElementById("rateSwitchLabel");
+    const labelLive = document.getElementById("labelLive");
+    const labelCustom = document.getElementById("labelCustom");
 
     // liveRateTWDToKRW：1 TWD 可換多少 KRW（即時）
     let liveRateTWDToKRW = 45.0;
@@ -1203,18 +1226,19 @@
         rateText.textContent =
           "目前使用即時匯率：約 1 TWD ≈ " + rateTWDToKRW.toFixed(2) + " KRW";
       } else {
-        // 自訂模式：不顯示文字
         rateText.textContent = "";
       }
     }
 
-    function updateSwitchLabel() {
-      // live 模式 → 切換鈕上只顯示「自訂」
-      // custom 模式 → 切換鈕上只顯示「即時」
+    function updateSwitchLabels() {
       if (rateMode === "live") {
-        rateSwitchLabel.textContent = "自訂";
+        // 即時模式：僅顯示右邊「自訂」
+        labelLive.style.opacity = 0;
+        labelCustom.style.opacity = 1;
       } else {
-        rateSwitchLabel.textContent = "即時";
+        // 自訂模式：僅顯示左邊「即時」
+        labelLive.style.opacity = 1;
+        labelCustom.style.opacity = 0;
       }
     }
 
@@ -1225,11 +1249,11 @@
         refreshRateBtn.style.display = "inline-flex";
       } else {
         customRateRow.style.display = "flex";
-        rateText.style.display = "none";      // 完全不顯示
+        rateText.style.display = "none";
         refreshRateBtn.style.display = "none";
       }
       updateRateText();
-      updateSwitchLabel();
+      updateSwitchLabels();
       recalcFromInputs();
     }
 
@@ -1269,7 +1293,6 @@
             updateRateText();
             recalcFromInputs();
           } else {
-            // 自訂模式不顯示文字
             rateText.textContent = "";
           }
         } else {
@@ -1295,7 +1318,6 @@
       rateMode = rateModeToggle.checked ? "custom" : "live";
 
       if (rateMode === "custom") {
-        // 切到自訂，帶入目前 live 當預設
         if (!customRateInput.value) {
           customRateInput.value = liveRateTWDToKRW.toFixed(2);
         }
@@ -1304,7 +1326,6 @@
           rateTWDToKRW = v;
         }
       } else {
-        // 切回即時
         rateTWDToKRW = liveRateTWDToKRW;
       }
 
@@ -1315,10 +1336,7 @@
     customRateInput.addEventListener("input", () => {
       if (rateMode !== "custom") return;
       const v = parseFloat(customRateInput.value);
-      if (isNaN(v) || v <= 0) {
-        // 自訂模式不顯示提示文字，所以不用 error message
-        return;
-      }
+      if (isNaN(v) || v <= 0) return;
       rateTWDToKRW = v;
       recalcFromInputs();
     });
