@@ -289,10 +289,10 @@
       border-top: 1px solid color-mix(in srgb, var(--border-soft) 90%, transparent);
     }
     .rate-icon.icon-calc::before {
-      top: 7px;   /* 顯示螢幕線 */
+      top: 7px;
     }
     .rate-icon.icon-calc::after {
-      bottom: 6px; /* 顯示按鍵線 */
+      bottom: 6px;
     }
 
     /* 匯率模式切換 */
@@ -769,7 +769,7 @@
     <main>
       <!-- 首頁 Page -->
       <section class="page active" id="page-home">
-        <!-- 匯率試算卡（KRW ↔ TWD） -->
+        <!-- 匯率試算卡（TWD ↔ KRW） -->
         <div class="card">
           <div class="rate-title-row">
             <div class="rate-title-left">
@@ -794,14 +794,14 @@
 
           <div class="custom-rate-row" id="customRateRow">
             <span>自訂匯率：</span>
-            <span>1 KRW ≈</span>
+            <span>1 TWD ≈</span>
             <input
               id="customRateInput"
               type="number"
-              step="0.000001"
-              placeholder="0.0002"
+              step="0.01"
+              placeholder="45.00"
             />
-            <span>TWD</span>
+            <span>KRW</span>
           </div>
 
           <div class="rate-body">
@@ -1135,8 +1135,8 @@
     });
 
     // -----------------------
-    // 匯率試算：KRW ↔ TWD
-    // 即時匯率 + 自訂匯率
+    // 匯率試算：TWD ↔ KRW
+    // 即時匯率 + 自訂匯率（視角：1 TWD = ? KRW）
     // -----------------------
     const krwInput = document.getElementById("krwInput");
     const twdInput = document.getElementById("twdInput");
@@ -1146,33 +1146,38 @@
     const customRateRow = document.getElementById("customRateRow");
     const customRateInput = document.getElementById("customRateInput");
 
-    let liveRateKRWtoTWD = 0.022; // 最近一次即時匯率
-    let rateKRWtoTWD = liveRateKRWtoTWD; // 目前實際計算用的匯率（可能是 live 或 custom）
+    // liveRateTWDToKRW：1 TWD 可換多少 KRW（即時）
+    let liveRateTWDToKRW = 45.0;
+    // rateTWDToKRW：目前實際計算用匯率（可能是 live 或 custom）
+    let rateTWDToKRW = liveRateTWDToKRW;
     let rateMode = "live"; // 'live' or 'custom'
-    let isUpdating = false; // 避免兩邊互相觸發造成迴圈
+    let isUpdating = false; // 避免互相觸發
 
     function updateRateText() {
       if (rateMode === "live") {
         rateText.textContent =
-          "目前使用即時匯率：約 1 KRW ≈ " + rateKRWtoTWD.toFixed(4) + " TWD";
+          "目前使用即時匯率：約 1 TWD ≈ " + rateTWDToKRW.toFixed(2) + " KRW";
       } else {
         rateText.textContent =
-          "目前使用自訂匯率：1 KRW ≈ " + rateKRWtoTWD.toFixed(6) + " TWD";
+          "目前使用自訂匯率：1 TWD ≈ " + rateTWDToKRW.toFixed(2) + " KRW";
       }
     }
 
     function recalcFromInputs() {
-      // 有輸入 KRW → 算 TWD；否則如果有 TWD → 算 KRW
       const vK = parseFloat(krwInput.value);
       const vT = parseFloat(twdInput.value);
 
+      // 公式：
+      // 1 TWD = rateTWDToKRW KRW
+      // KRW → TWD = KRW / rate
+      // TWD → KRW = TWD * rate
       if (!isNaN(vK)) {
         isUpdating = true;
-        twdInput.value = (vK * rateKRWtoTWD).toFixed(0);
+        twdInput.value = (vK / rateTWDToKRW).toFixed(0);
         isUpdating = false;
       } else if (!isNaN(vT)) {
         isUpdating = true;
-        krwInput.value = (vT / rateKRWtoTWD).toFixed(0);
+        krwInput.value = (vT * rateTWDToKRW).toFixed(0);
         isUpdating = false;
       }
     }
@@ -1181,19 +1186,22 @@
       try {
         rateText.textContent = "匯率載入中…";
 
+        // API 回傳：base=KRW，rates.TWD = 1 KRW 可換多少 TWD
         const res = await fetch("https://open.er-api.com/v6/latest/KRW");
         const data = await res.json();
 
         if (data && data.result === "success" && data.rates && data.rates.TWD) {
-          liveRateKRWtoTWD = data.rates.TWD;
+          const twdPerKrw = data.rates.TWD; // 1 KRW = twdPerKrw TWD
+          // 1 TWD = ? KRW → 1 / twdPerKrw
+          liveRateTWDToKRW = 1 / twdPerKrw;
+
           if (rateMode === "live") {
-            rateKRWtoTWD = liveRateKRWtoTWD;
+            rateTWDToKRW = liveRateTWDToKRW;
             updateRateText();
             recalcFromInputs();
           } else {
-            // 目前在自訂模式，只更新 live 的備用值
             rateText.textContent =
-              "已更新即時匯率（自訂模式中不套用）。";
+              "已更新即時匯率（目前為自訂模式，未套用）。";
           }
         } else {
           rateText.textContent = "匯率載入失敗，使用預設匯率。";
@@ -1206,8 +1214,9 @@
 
     // 初次載入：抓一次即時匯率
     fetchRate();
+    updateRateText();
 
-    // 手動重新抓匯率（僅在即時匯率模式下有意義）
+    // 手動重新抓匯率
     refreshRateBtn.addEventListener("click", () => {
       fetchRate();
     });
@@ -1223,24 +1232,21 @@
         rateMode = mode;
 
         if (rateMode === "live") {
-          // 切回即時匯率
-          rateKRWtoTWD = liveRateKRWtoTWD;
+          rateTWDToKRW = liveRateTWDToKRW;
           customRateRow.style.display = "none";
           refreshRateBtn.style.display = "inline-flex";
           updateRateText();
           recalcFromInputs();
         } else {
-          // 切到自訂匯率
           customRateRow.style.display = "flex";
           refreshRateBtn.style.display = "none";
 
-          // 如果自訂匯率還沒填，就先帶入 live 當基準
           if (!customRateInput.value) {
-            customRateInput.value = liveRateKRWtoTWD.toFixed(6);
+            customRateInput.value = liveRateTWDToKRW.toFixed(2);
           }
           const v = parseFloat(customRateInput.value);
           if (!isNaN(v) && v > 0) {
-            rateKRWtoTWD = v;
+            rateTWDToKRW = v;
           }
           updateRateText();
           recalcFromInputs();
@@ -1248,20 +1254,20 @@
       });
     });
 
-    // 自訂匯率輸入變化
+    // 自訂匯率輸入變化（1 TWD = ? KRW）
     customRateInput.addEventListener("input", () => {
       if (rateMode !== "custom") return;
       const v = parseFloat(customRateInput.value);
       if (isNaN(v) || v <= 0) {
-        rateText.textContent = "請輸入有效的自訂匯率。";
+        rateText.textContent = "請輸入有效的自訂匯率（1 TWD ≈ ? KRW）。";
         return;
       }
-      rateKRWtoTWD = v;
+      rateTWDToKRW = v;
       updateRateText();
       recalcFromInputs();
     });
 
-    // 由韓幣轉台幣
+    // 由韓幣轉台幣：KRW → TWD
     krwInput.addEventListener("input", () => {
       if (isUpdating) return;
       const v = parseFloat(krwInput.value);
@@ -1272,11 +1278,11 @@
         return;
       }
       isUpdating = true;
-      twdInput.value = (v * rateKRWtoTWD).toFixed(0);
+      twdInput.value = (v / rateTWDToKRW).toFixed(0);
       isUpdating = false;
     });
 
-    // 由台幣轉韓幣
+    // 由台幣轉韓幣：TWD → KRW
     twdInput.addEventListener("input", () => {
       if (isUpdating) return;
       const v = parseFloat(twdInput.value);
@@ -1287,7 +1293,7 @@
         return;
       }
       isUpdating = true;
-      krwInput.value = (v / rateKRWtoTWD).toFixed(0);
+      krwInput.value = (v * rateTWDToKRW).toFixed(0);
       isUpdating = false;
     });
   </script>
