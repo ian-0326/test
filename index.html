@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>K-TRIP MATE Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* -----------------------
+       基本 Theme 變數（奶茶沖繩）
+    ------------------------ */
+    :root {
+      --bg: #f8f3ec;
+      --card-bg: #ffffff;
+      --primary: #3f2b24;
+      --accent: #f3c979;
+      --accent-soft: #fff4d9;
+      --text-main: #2e2a28;
+      --text-sub: #a8a098;
+      --border-soft: #eee1d0;
+      --shadow-soft: 0 8px 18px rgba(0, 0, 0, 0.06);
+      --radius-card: 18px;
+      --radius-pill: 999px;
+      --radius-btn: 30px;
+    }
+
+    /* 主題：首爾櫻花 */
+    :root[data-theme="sakura"] {
+      --bg: #fff7fa;
+      --card-bg: #ffffff;
+      --primary: #e488a7;
+      --accent: #f6c3d6;
+      --accent-soft: #ffe5f0;
+      --text-main: #3a2a33;
+      --text-sub: #b29aa8;
+      --border-soft: #f2ccde;
+      --shadow-soft: 0 8px 18px rgba(228, 136, 167, 0.18);
+    }
+
+    /* 主題：漢江夜景（深色） */
+    :root[data-theme="night"] {
+      --bg: #191a1f;
+      --card-bg: #23242b;
+      --primary: #ffd369;
+      --accent: #3f8ae0;
+      --accent-soft: #2e3242;
+      --text-main: #f5f5f5;
+      --text-sub: #9b9da5;
+      --border-soft: #2d3040;
+      --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Noto Sans TC", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* -----------------------
+       Header
+    ------------------------ */
+    .app-header {
+      padding: 14px 18px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--bg) 92%, transparent),
+        color-mix(in srgb, var(--bg) 92%, transparent),
+        transparent
+      );
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .header-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      background: var(--accent-soft);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      border: none;
+      background: var(--card-bg);
+      border-radius: 999px;
+      padding: 6px 10px;
+      box-shadow: var(--shadow-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .icon-btn span {
+      font-size: 16px;
+    }
+
+    /* -----------------------
+       主內容 & 卡片通用
+    ------------------------ */
+    main {
+      flex: 1;
+      padding: 4px 16px 72px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.18s ease-out;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 14px;
+      margin: 14px 4px 6px;
+      color: var(--text-sub);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-card);
+      padding: 14px 16px;
+      margin: 8px 0;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
+    }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sub-text {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .primary-text {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .pill {
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      color: var(--primary);
+      padding: 5px 10px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill-outline {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      padding: 6px 10px;
+      font-size: 12px;
+      background: color-mix(in srgb, var(--card-bg) 85%, transparent);
+      color: var(--text-main);
+    }
+
+    .pill-outline.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      border-radius: var(--radius-btn);
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 18px;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      border-radius: var(--radius-btn);
+      border: 1px solid var(--border-soft);
+      background: transparent;
+      padding: 8px 14px;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+    }
+
+    .btn-ghost:active {
+      transform: translateY(1px);
+    }
+
+    /* -----------------------
+       Dashboard 細節
+    ------------------------ */
+    .today-main {
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .next-event {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .countdown {
+      text-align: right;
+    }
+
+    .countdown-big {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .countdown-small {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .rate-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .rate-main {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .hint-bar {
+      margin-top: 10px;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      background: var(--accent-soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hint-bar span {
+      font-size: 16px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .lang-card-wrap {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-top: 6px;
+    }
+
+    .lang-card {
+      flex: 0 0 72%;
+      min-width: 220px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
+    }
+
+    .lang-kr {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .lang-roman {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .lang-bottom-row {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .icon-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    /* -----------------------
+       行程
+    ------------------------ */
+    .date-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin: 4px 0 10px;
+    }
+
+    .date-pill {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border-soft);
+      background: color-mix(in srgb, var(--card-bg) 85%, transparent);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .date-pill.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .trip-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0 10px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .card-actions-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    /* -----------------------
+       記帳
+    ------------------------ */
+    .chip-grid {
+      display: flex;
+      gap: 8px;
+      margin: 8px 0 4px;
+      flex-wrap: wrap;
+    }
+
+    .chip-icon {
+      flex: 1;
+      min-width: 70px;
+      text-align: center;
+      padding: 8px 4px;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      font-size: 11px;
+      color: var(--text-sub);
+      background: color-mix(in srgb, var(--card-bg) 85%, transparent);
+    }
+
+    .chip-icon.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .input-row {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-label {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .input-field {
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      padding: 8px 10px;
+      font-size: 13px;
+      width: 100%;
+      background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+      color: var(--text-main);
+    }
+
+    .two-col {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .summary-bar {
+      margin-top: 10px;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      background: var(--accent-soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-bar span {
+      font-size: 16px;
+    }
+
+    .record-list {
+      margin-top: 10px;
+    }
+
+    .record-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 2px;
+      border-bottom: 1px dashed var(--border-soft);
+      font-size: 13px;
+    }
+
+    .record-meta {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    /* -----------------------
+       清單
+    ------------------------ */
+    .progress-bar-wrap {
+      margin-top: 6px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--border-soft) 60%, transparent);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 72%;
+      background: var(--accent);
+    }
+
+    .group-card {
+      margin-top: 10px;
+    }
+
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .checklist {
+      margin-top: 4px;
+      font-size: 13px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0;
+    }
+
+    .check-item input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+    }
+
+    /* -----------------------
+       底部導航
+    ------------------------ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(480px, 100% - 24px);
+      background: color-mix(in srgb, var(--card-bg) 92%, transparent);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 6px;
+      z-index: 20;
+    }
+
+    .nav-btn {
+      flex: 1;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      padding: 6px 2px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-sub);
+      gap: 2px;
+    }
+
+    .nav-btn span {
+      font-size: 18px;
+    }
+
+    .nav-btn.active {
+      background: var(--accent-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* 動畫 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --bg: #191a1f;
+        --card-bg: #23242b;
+        --primary: #ffd369;
+        --accent: #3f8ae0;
+        --accent-soft: #2e3242;
+        --text-main: #f5f5f5;
+        --text-sub: #9b9da5;
+        --border-soft: #2d3040;
+        --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.6);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-title">K-TRIP MATE</div>
+        <div class="brand-sub">首爾 4 日遊 · D1</div>
+      </div>
+      <div class="header-right">
+        <div class="chip">
+          <span>●</span>
+          雙人同步中
+        </div>
+        <button class="icon-btn" id="themeBtn">
+          <span>🎨</span> 主題
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Dashboard Page -->
+      <section class="page active" id="page-home">
+        <div class="section-title">今日概況</div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="sub-text">今天 · 11/20 (Wed)</div>
+              <div class="today-main">首爾 · 14°C · 맑음</div>
+              <div class="next-event">下一個行程：16:00 弘大逛街</div>
+            </div>
+            <div class="countdown">
+              <div class="countdown-big">1 小時 25 分</div>
+              <div class="countdown-small">距離下一個行程</div>
+            </div>
+          </div>
+          <div style="margin-top: 10px; display: flex; gap: 8px;">
+            <button class="btn-primary">查看今日行程</button>
+            <button class="btn-ghost">緊急聯絡</button>
+          </div>
+        </div>
+
+        <div class="section-title">匯率 & 免稅提示</div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="rate-main">1,000 KRW ≈ 24.5 TWD</div>
+              <div class="sub-text">今日銀行現金匯率參考值</div>
+            </div>
+            <button class="pill-outline">切換幣別 ▾</button>
+          </div>
+          <div class="hint-bar">
+            <span>💡</span>
+            免稅店最低消費門檻：約 30,000 KRW（含同日合併）
+          </div>
+        </div>
+
+        <div class="section-title">常用韓文卡片</div>
+        <div class="lang-card-wrap">
+          <div class="lang-card">
+            <div class="lang-kr">계산이요.</div>
+            <div class="lang-roman">gyesan-i-yo</div>
+            <div class="lang-bottom-row">
+              <div>結帳，謝謝。</div>
+              <div class="icon-circle">🔊</div>
+            </div>
+          </div>
+          <div class="lang-card">
+            <div class="lang-kr">포장해 주세요.</div>
+            <div class="lang-roman">pojanghai jus-eyo</div>
+            <div class="lang-bottom-row">
+              <div>請幫我打包。</div>
+              <div class="icon-circle">🔊</div>
+            </div>
+          </div>
+          <div class="lang-card">
+            <div class="lang-kr">화장실 어디에 있어요?</div>
+            <div class="lang-roman">hwajangsil eodie iss-eoyo</div>
+            <div class="lang-bottom-row">
+              <div>廁所在哪裡？</div>
+              <div class="icon-circle">🔊</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">緊急 & 實用</div>
+        <div class="card">
+          <div class="chip-row">
+            <div class="pill">
+              🚑 緊急電話
+            </div>
+            <div class="pill">
+              🏥 24 小時醫院/藥局
+            </div>
+            <div class="pill">
+              💳 信用卡掛失
+            </div>
+            <div class="pill">
+              📝 快速備忘
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 行程 Page -->
+      <section class="page" id="page-trip">
+        <div class="section-title">日期</div>
+        <div class="date-strip">
+          <button class="date-pill active">D1 · 11/20</button>
+          <button class="date-pill">D2 · 11/21</button>
+          <button class="date-pill">D3 · 11/22</button>
+          <button class="date-pill">D4 · 11/23</button>
+        </div>
+
+        <div class="card">
+          <div class="trip-card-top">
+            <div>
+              <div class="sub-text">09:00 - 11:00</div>
+              <div>南山塔散步</div>
+            </div>
+            <div class="sub-text">首爾市中區</div>
+          </div>
+          <div class="tag-row">
+            <div class="tag">自駕</div>
+            <div class="tag">含 MapCode</div>
+            <div class="tag">適合拍照</div>
+          </div>
+          <div class="card-actions-row">
+            <button class="btn-primary">導航</button>
+            <button class="btn-ghost">提醒：出發前 5 分鐘</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="trip-card-top">
+            <div>
+              <div class="sub-text">12:30 - 14:00</div>
+              <div>梨泰院午餐</div>
+            </div>
+            <div class="sub-text">韓牛烤肉</div>
+          </div>
+          <div class="tag-row">
+            <div class="tag">地鐵</div>
+            <div class="tag">美食</div>
+          </div>
+          <div class="card-actions-row">
+            <button class="btn-primary">導航</button>
+            <button class="btn-ghost">提醒：出發前 10 分鐘</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="sub-text">模式</div>
+              <div>自駕大字模式</div>
+            </div>
+            <button class="pill-outline">暫未開啟</button>
+          </div>
+          <div class="sub-text" style="margin-top: 6px;">
+            啟用後，行程會以大字 & 高對比顯示，給副駕駛在車上看更清楚。
+          </div>
+        </div>
+      </section>
+
+      <!-- 記帳 Page -->
+      <section class="page" id="page-money">
+        <div class="section-title">新增記錄</div>
+        <div class="card">
+          <div class="sub-text">分類</div>
+          <div class="chip-grid">
+            <div class="chip-icon active">🍙 餐飲</div>
+            <div class="chip-icon">🚆 交通</div>
+            <div class="chip-icon">🛍️ 購物</div>
+            <div class="chip-icon">🎟️ 門票</div>
+            <div class="chip-icon">🏨 住宿</div>
+            <div class="chip-icon">⋯ 其他</div>
+          </div>
+
+          <div class="two-col">
+            <div style="flex: 1;">
+              <div class="input-label">幣別</div>
+              <div class="pill-row">
+                <button class="pill-outline active">KRW</button>
+                <button class="pill-outline">TWD</button>
+                <button class="pill-outline">JPY</button>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="input-label">付款人</div>
+              <div class="pill-row">
+                <button class="pill-outline active">我</button>
+                <button class="pill-outline">男友</button>
+                <button class="pill-outline">公費</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <div class="input-label">金額</div>
+            <input class="input-field" placeholder="輸入金額（例如 48,000）" />
+            <div class="sub-text">約 NT$ 1,176（僅供參考）</div>
+          </div>
+
+          <div class="input-row">
+            <div class="input-label">備註</div>
+            <input class="input-field" placeholder="例如：弘大烤肉" />
+          </div>
+
+          <div class="input-row">
+            <div class="input-label">分攤方式</div>
+            <div class="two-col">
+              <button class="pill-outline active" style="flex: 1;">共同分攤</button>
+              <button class="pill-outline" style="flex: 1;">個人自付</button>
+            </div>
+          </div>
+
+          <div class="summary-bar">
+            <span>🧮</span>
+            今日累計：簡哥需給你 ₩ 35,810（平分後差額）
+          </div>
+
+          <div style="margin-top: 12px; text-align: right;">
+            <button class="btn-primary">新增記錄</button>
+          </div>
+        </div>
+
+        <div class="section-title">今日紀錄</div>
+        <div class="card">
+          <div class="record-list">
+            <div class="record-item">
+              <div>
+                <div>🍙 弘大烤肉</div>
+                <div class="record-meta">你付款 · 共同分攤</div>
+              </div>
+              <div>₩ 48,000</div>
+            </div>
+            <div class="record-item">
+              <div>
+                <div>🚆 地鐵一日券</div>
+                <div class="record-meta">男友付款 · 共同分攤</div>
+              </div>
+              <div>₩ 10,000</div>
+            </div>
+            <div class="record-item">
+              <div>
+                <div>🛍️ 便利商店零食</div>
+                <div class="record-meta">你付款 · 個人自付</div>
+              </div>
+              <div>₩ 4,500</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 清單 Page -->
+      <section class="page" id="page-list">
+        <div class="section-title">打包進度</div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div>打包完成度 72%</div>
+              <div class="sub-text">還有 6 件物品尚未勾選</div>
+            </div>
+            <button class="pill-outline">重新整理</button>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">行李分類</div>
+
+        <div class="card group-card">
+          <div class="group-header">
+            <div>👕 衣物</div>
+            <div class="sub-text">5 / 8</div>
+          </div>
+          <div class="checklist">
+            <label class="check-item">
+              <input type="checkbox" checked />
+              <span>外套</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" checked />
+              <span>換洗上衣 3 件</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" checked />
+              <span>睡衣</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" />
+              <span>備用襪子</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card group-card">
+          <div class="group-header">
+            <div>🔌 3C & 充電</div>
+            <div class="sub-text">3 / 5</div>
+          </div>
+          <div class="checklist">
+            <label class="check-item">
+              <input type="checkbox" checked />
+              <span>手機充電線</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" checked />
+              <span>行動電源</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" />
+              <span>相機電池</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" checked />
+              <span>轉接頭</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card group-card">
+          <div class="group-header">
+            <div>💼 文件 & 現金</div>
+            <div class="sub-text">2 / 4</div>
+          </div>
+          <div class="checklist">
+            <label class="check-item">
+              <input type="checkbox" checked />
+              <span>護照</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" />
+              <span>現金 / 卡片</span>
+            </label>
+            <label class="check-item">
+              <input type="checkbox" />
+              <span>eSIM / SIM 卡針</span>
+            </label>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部導航 -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-tab="home">
+        <span>🏠</span>
+        首頁
+      </button>
+      <button class="nav-btn" data-tab="trip">
+        <span>📅</span>
+        行程
+      </button>
+      <button class="nav-btn" data-tab="money">
+        <span>💰</span>
+        記帳
+      </button>
+      <button class="nav-btn" data-tab="list">
+        <span>✅</span>
+        清單
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    // -----------------------
+    // Tab 切換
+    // -----------------------
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const pages = {
+      home: document.getElementById("page-home"),
+      trip: document.getElementById("page-trip"),
+      money: document.getElementById("page-money"),
+      list: document.getElementById("page-list"),
+    };
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+
+        navButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        Object.values(pages).forEach((p) => p.classList.remove("active"));
+        pages[tab].classList.add("active");
+      });
+    });
+
+    // -----------------------
+    // 主題切換（沖繩 → 櫻花 → 夜景）
+    // -----------------------
+    const themeBtn = document.getElementById("themeBtn");
+    const themes = ["okinawa", "sakura", "night"];
+    let themeIndex = 0;
+
+    function applyTheme() {
+      const themeKey = themes[themeIndex];
+      if (themeKey === "okinawa") {
+        document.documentElement.removeAttribute("data-theme");
+        themeBtn.innerHTML = `<span>🎨</span> 奶茶`;
+      } else if (themeKey === "sakura") {
+        document.documentElement.setAttribute("data-theme", "sakura");
+        themeBtn.innerHTML = `<span>🌸</span> 櫻花`;
+      } else {
+        document.documentElement.setAttribute("data-theme", "night");
+        themeBtn.innerHTML = `<span>🌙</span> 夜景`;
+      }
+    }
+
+    applyTheme();
+
+    themeBtn.addEventListener("click", () => {
+      themeIndex = (themeIndex + 1) % themes.length;
+      applyTheme();
+    });
+  </script>
+</body>
+</html>
