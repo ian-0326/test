@@ -75,10 +75,10 @@
     }
 
     /* -----------------------
-       Header
+       Header + 上方分頁
     ------------------------ */
     .app-header {
-      padding: 14px 18px 6px;
+      padding: 10px 18px 4px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -86,18 +86,17 @@
       top: 0;
       z-index: 10;
       backdrop-filter: blur(18px);
-      background: linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--bg) 92%, transparent),
-        color-mix(in srgb, var(--bg) 92%, transparent),
-        transparent
-      );
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
     }
 
     .brand {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-logo {
+      font-size: 18px;
     }
 
     .brand-title {
@@ -106,43 +105,80 @@
       text-transform: uppercase;
     }
 
-    .brand-sub {
-      font-size: 12px;
-      color: var(--text-sub);
-    }
-
     .header-right {
       display: flex;
       gap: 8px;
       align-items: center;
     }
 
-    .chip {
+    .status-pill {
       border-radius: 999px;
       padding: 4px 8px;
       font-size: 11px;
-      background: var(--accent-soft);
-      color: var(--primary);
+      background: #e6f7e9;
+      color: #1f9b44;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+    }
+
+    .status-pill span {
+      font-size: 13px;
     }
 
     .icon-btn {
       border: none;
       background: var(--card-bg);
       border-radius: 999px;
-      padding: 6px 10px;
+      padding: 5px 9px;
       box-shadow: var(--shadow-soft);
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-main);
     }
 
     .icon-btn span {
-      font-size: 16px;
+      font-size: 15px;
+    }
+
+    /* 上方分頁 */
+    .top-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      font-size: 13px;
+      padding: 6px 0 4px;
+      border-bottom: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      position: sticky;
+      top: 46px;
+      z-index: 9;
+    }
+
+    .top-tab {
+      padding-bottom: 6px;
+      position: relative;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+
+    .top-tab.active {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .top-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 28px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--primary);
     }
 
     /* -----------------------
@@ -150,7 +186,7 @@
     ------------------------ */
     main {
       flex: 1;
-      padding: 4px 16px 72px;
+      padding: 12px 16px 24px;
     }
 
     .page {
@@ -162,12 +198,6 @@
       display: block;
     }
 
-    .section-title {
-      font-size: 14px;
-      margin: 14px 4px 6px;
-      color: var(--text-sub);
-    }
-
     .card {
       background: var(--card-bg);
       border-radius: var(--radius-card);
@@ -177,32 +207,35 @@
       border: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
     }
 
-    .card-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
     .sub-text {
       font-size: 12px;
       color: var(--text-sub);
     }
 
-    .primary-text {
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    .pill {
-      border-radius: var(--radius-pill);
-      background: var(--accent-soft);
-      color: var(--primary);
-      padding: 5px 10px;
-      font-size: 11px;
+    .btn-primary {
+      border-radius: var(--radius-btn);
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 18px;
+      font-size: 14px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btn-ghost {
+      border-radius: var(--radius-btn);
+      border: 1px solid var(--border-soft);
+      background: transparent;
+      padding: 8px 14px;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
     }
 
     .pill-outline {
@@ -221,155 +254,212 @@
       font-weight: 600;
     }
 
-    .btn-primary {
-      border-radius: var(--radius-btn);
-      border: none;
-      background: var(--primary);
-      color: #fff;
-      padding: 10px 18px;
+    /* -----------------------
+       首頁：匯率卡
+    ------------------------ */
+    .rate-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .rate-title-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: var(--shadow-soft);
     }
 
-    .btn-primary:active {
-      transform: translateY(1px);
-      box-shadow: none;
+    .rate-icon {
+      font-size: 18px;
     }
 
-    .btn-ghost {
-      border-radius: var(--radius-btn);
-      border: 1px solid var(--border-soft);
-      background: transparent;
-      padding: 8px 14px;
-      font-size: 13px;
-      display: inline-flex;
+    .rate-body {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      margin: 4px 0 8px;
+    }
+
+    .rate-col {
+      flex: 1;
+    }
+
+    .rate-label {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-bottom: 2px;
+    }
+
+    .rate-input {
+      font-size: 26px;
       color: var(--text-main);
     }
 
-    .btn-ghost:active {
-      transform: translateY(1px);
+    .rate-equal {
+      width: 40px;
+      text-align: center;
+      font-size: 20px;
+      color: var(--text-sub);
+    }
+
+    .rate-line {
+      margin-top: 4px;
+      height: 1px;
+      width: 100%;
+      background: color-mix(in srgb, var(--border-soft) 80%, transparent);
+    }
+
+    .rate-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 12px;
     }
 
     /* -----------------------
-       Dashboard 細節
+       首頁：一週天氣卡
     ------------------------ */
-    .today-main {
+    .weather-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
       font-size: 13px;
-      margin-top: 4px;
     }
 
-    .next-event {
+    .weather-row {
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
       font-size: 12px;
-      color: var(--text-sub);
-      margin-top: 4px;
     }
 
-    .countdown {
-      text-align: right;
+    .weather-day {
+      flex: 1;
     }
 
-    .countdown-big {
+    .weather-icon {
       font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .weather-temp {
+      margin-top: 2px;
+      font-size: 13px;
+    }
+
+    /* -----------------------
+       首頁：入境/自駕模式 Segment
+    ------------------------ */
+    .segment-wrap {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .segment {
+      background: var(--card-bg);
+      border-radius: 999px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .segment-btn {
+      flex: 1;
+      border: none;
+      padding: 10px 8px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: transparent;
+      color: var(--text-sub);
+    }
+
+    .segment-btn.active {
+      background: var(--primary);
+      color: #fff;
       font-weight: 600;
     }
 
-    .countdown-small {
-      font-size: 11px;
-      color: var(--text-sub);
-    }
-
-    .rate-row {
+    /* -----------------------
+       首頁：Visit Japan Web 卡
+    ------------------------ */
+    .vjw-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .vjw-left {
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .rate-main {
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    .hint-bar {
-      margin-top: 10px;
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-size: 12px;
-      background: var(--accent-soft);
-      color: var(--primary);
+    .qr-box {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
       display: flex;
       align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .vjw-members {
+      display: flex;
       gap: 6px;
     }
 
-    .hint-bar span {
-      font-size: 16px;
-    }
-
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .lang-card-wrap {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-top: 6px;
-    }
-
-    .lang-card {
-      flex: 0 0 72%;
-      min-width: 220px;
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 10px 12px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
-    }
-
-    .lang-kr {
-      font-size: 18px;
-      margin-bottom: 4px;
-    }
-
-    .lang-roman {
-      font-size: 11px;
+    .vjw-pill {
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border-soft);
+      background: color-mix(in srgb, var(--card-bg) 90%, transparent);
       color: var(--text-sub);
     }
 
-    .lang-bottom-row {
-      margin-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
+    .vjw-pill.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--primary);
+      font-weight: 600;
     }
 
-    .icon-circle {
-      width: 30px;
-      height: 30px;
-      border-radius: 999px;
-      display: inline-flex;
+    .vjw-placeholder {
+      border-radius: 14px;
+      border: 1px dashed var(--border-soft);
+      height: 110px;
+      display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--accent-soft);
-      color: var(--primary);
-      font-size: 16px;
+      font-size: 12px;
+      color: var(--text-sub);
+      background: color-mix(in srgb, var(--bg) 70%, transparent);
     }
 
     /* -----------------------
-       行程
+       其他分頁沿用舊版樣式（簡化）
     ------------------------ */
+    .section-title {
+      font-size: 14px;
+      margin: 6px 4px 4px;
+      color: var(--text-sub);
+    }
+
     .date-strip {
       display: flex;
       gap: 8px;
@@ -395,12 +485,6 @@
       font-weight: 600;
     }
 
-    .trip-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
     .tag-row {
       display: flex;
       flex-wrap: wrap;
@@ -422,9 +506,6 @@
       margin-top: 4px;
     }
 
-    /* -----------------------
-       記帳
-    ------------------------ */
     .chip-grid {
       display: flex;
       gap: 8px;
@@ -520,13 +601,6 @@
       color: var(--text-sub);
     }
 
-    /* -----------------------
-       清單
-    ------------------------ */
-    .progress-bar-wrap {
-      margin-top: 6px;
-    }
-
     .progress-track {
       width: 100%;
       height: 6px;
@@ -539,10 +613,6 @@
       height: 100%;
       width: 72%;
       background: var(--accent);
-    }
-
-    .group-card {
-      margin-top: 10px;
     }
 
     .group-header {
@@ -569,49 +639,6 @@
       width: 16px;
       height: 16px;
       accent-color: var(--primary);
-    }
-
-    /* -----------------------
-       底部導航
-    ------------------------ */
-    .bottom-nav {
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(480px, 100% - 24px);
-      background: color-mix(in srgb, var(--card-bg) 92%, transparent);
-      border-radius: 22px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid color-mix(in srgb, var(--border-soft) 80%, transparent);
-      display: flex;
-      justify-content: space-around;
-      padding: 6px 6px;
-      z-index: 20;
-    }
-
-    .nav-btn {
-      flex: 1;
-      border-radius: 999px;
-      border: none;
-      background: transparent;
-      padding: 6px 2px;
-      font-size: 11px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: var(--text-sub);
-      gap: 2px;
-    }
-
-    .nav-btn span {
-      font-size: 18px;
-    }
-
-    .nav-btn.active {
-      background: var(--accent-soft);
-      color: var(--primary);
-      font-weight: 600;
     }
 
     /* 動畫 */
@@ -647,13 +674,12 @@
     <!-- Header -->
     <header class="app-header">
       <div class="brand">
-        <div class="brand-title">K-TRIP MATE</div>
-        <div class="brand-sub">首爾 4 日遊 · D1</div>
+        <div class="brand-logo">🌴</div>
+        <div class="brand-title">K-TRIP</div>
       </div>
       <div class="header-right">
-        <div class="chip">
-          <span>●</span>
-          雙人同步中
+        <div class="status-pill">
+          <span>✅</span> 已儲存
         </div>
         <button class="icon-btn" id="themeBtn">
           <span>🎨</span> 主題
@@ -661,91 +687,115 @@
       </div>
     </header>
 
+    <!-- 上方分頁 -->
+    <div class="top-tabs">
+      <div class="top-tab active" data-tab="home">首頁</div>
+      <div class="top-tab" data-tab="trip">行程</div>
+      <div class="top-tab" data-tab="money">記帳</div>
+      <div class="top-tab" data-tab="list">清單</div>
+    </div>
+
     <main>
-      <!-- Dashboard Page -->
+      <!-- 首頁 Page：排版比照截圖 -->
       <section class="page active" id="page-home">
-        <div class="section-title">今日概況</div>
+        <!-- 匯率試算卡 -->
         <div class="card">
-          <div class="card-header-row">
-            <div>
-              <div class="sub-text">今天 · 11/20 (Wed)</div>
-              <div class="today-main">首爾 · 14°C · 맑음</div>
-              <div class="next-event">下一個行程：16:00 弘大逛街</div>
+          <div class="rate-title-row">
+            <div class="rate-title-left">
+              <span class="rate-icon">🧮</span>
+              <span>匯率試算</span>
             </div>
-            <div class="countdown">
-              <div class="countdown-big">1 小時 25 分</div>
-              <div class="countdown-small">距離下一個行程</div>
+            <button class="pill-outline" style="font-size:11px;">重整</button>
+          </div>
+
+          <div class="rate-body">
+            <div class="rate-col">
+              <div class="rate-label">JPY 日幣</div>
+              <div class="rate-input">0</div>
+              <div class="rate-line"></div>
+            </div>
+            <div class="rate-equal">＝</div>
+            <div class="rate-col" style="text-align:right;">
+              <div class="rate-label">TWD 台幣</div>
+              <div class="rate-input">0</div>
+              <div class="rate-line"></div>
             </div>
           </div>
-          <div style="margin-top: 10px; display: flex; gap: 8px;">
-            <button class="btn-primary">查看今日行程</button>
-            <button class="btn-ghost">緊急聯絡</button>
+
+          <div class="rate-footer">
+            <div class="sub-text">匯率：0.202（示意）</div>
+            <button class="pill-outline" style="font-size:11px;">
+              差 ¥5500 免稅
+            </button>
           </div>
         </div>
 
-        <div class="section-title">匯率 & 免稅提示</div>
+        <!-- 一週天氣 -->
         <div class="card">
-          <div class="card-header-row">
-            <div>
-              <div class="rate-main">1,000 KRW ≈ 24.5 TWD</div>
-              <div class="sub-text">今日銀行現金匯率參考值</div>
+          <div class="weather-header">
+            <div>沖繩一週天氣</div>
+            <div class="sub-text">Naha, JP</div>
+          </div>
+          <div class="weather-row">
+            <div class="weather-day">
+              <div>Sat</div>
+              <div class="weather-icon">☀️</div>
+              <div class="weather-temp">22°</div>
             </div>
-            <button class="pill-outline">切換幣別 ▾</button>
-          </div>
-          <div class="hint-bar">
-            <span>💡</span>
-            免稅店最低消費門檻：約 30,000 KRW（含同日合併）
-          </div>
-        </div>
-
-        <div class="section-title">常用韓文卡片</div>
-        <div class="lang-card-wrap">
-          <div class="lang-card">
-            <div class="lang-kr">계산이요.</div>
-            <div class="lang-roman">gyesan-i-yo</div>
-            <div class="lang-bottom-row">
-              <div>結帳，謝謝。</div>
-              <div class="icon-circle">🔊</div>
+            <div class="weather-day">
+              <div>Sun</div>
+              <div class="weather-icon">⛅️</div>
+              <div class="weather-temp">20°</div>
             </div>
-          </div>
-          <div class="lang-card">
-            <div class="lang-kr">포장해 주세요.</div>
-            <div class="lang-roman">pojanghai jus-eyo</div>
-            <div class="lang-bottom-row">
-              <div>請幫我打包。</div>
-              <div class="icon-circle">🔊</div>
+            <div class="weather-day">
+              <div>Mon</div>
+              <div class="weather-icon">☀️</div>
+              <div class="weather-temp">23°</div>
             </div>
-          </div>
-          <div class="lang-card">
-            <div class="lang-kr">화장실 어디에 있어요?</div>
-            <div class="lang-roman">hwajangsil eodie iss-eoyo</div>
-            <div class="lang-bottom-row">
-              <div>廁所在哪裡？</div>
-              <div class="icon-circle">🔊</div>
+            <div class="weather-day">
+              <div>Tue</div>
+              <div class="weather-icon">⛅️</div>
+              <div class="weather-temp">24°</div>
+            </div>
+            <div class="weather-day">
+              <div>Wed</div>
+              <div class="weather-icon">☀️</div>
+              <div class="weather-temp">25°</div>
             </div>
           </div>
         </div>
 
-        <div class="section-title">緊急 & 實用</div>
+        <!-- 模式切換：入境 / 自駕 -->
+        <div class="segment-wrap">
+          <div class="segment">
+            <button class="segment-btn active">
+              ✈️ 入境模式
+            </button>
+            <button class="segment-btn">
+              🚗 自駕模式
+            </button>
+          </div>
+        </div>
+
+        <!-- Visit Japan Web 卡 -->
         <div class="card">
-          <div class="chip-row">
-            <div class="pill">
-              🚑 緊急電話
+          <div class="vjw-header">
+            <div class="vjw-left">
+              <div class="qr-box">▣</div>
+              <div>Visit Japan Web</div>
             </div>
-            <div class="pill">
-              🏥 24 小時醫院/藥局
+            <div class="vjw-members">
+              <div class="vjw-pill">小朱</div>
+              <div class="vjw-pill active">簡哥</div>
             </div>
-            <div class="pill">
-              💳 信用卡掛失
-            </div>
-            <div class="pill">
-              📝 快速備忘
-            </div>
+          </div>
+          <div class="vjw-placeholder">
+            這裡可以放 QR Code 或截圖（範例）
           </div>
         </div>
       </section>
 
-      <!-- 行程 Page -->
+      <!-- 行程 Page（簡版，保留原來內容） -->
       <section class="page" id="page-trip">
         <div class="section-title">日期</div>
         <div class="date-strip">
@@ -756,7 +806,7 @@
         </div>
 
         <div class="card">
-          <div class="trip-card-top">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
             <div>
               <div class="sub-text">09:00 - 11:00</div>
               <div>南山塔散步</div>
@@ -775,7 +825,7 @@
         </div>
 
         <div class="card">
-          <div class="trip-card-top">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
             <div>
               <div class="sub-text">12:30 - 14:00</div>
               <div>梨泰院午餐</div>
@@ -789,19 +839,6 @@
           <div class="card-actions-row">
             <button class="btn-primary">導航</button>
             <button class="btn-ghost">提醒：出發前 10 分鐘</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header-row">
-            <div>
-              <div class="sub-text">模式</div>
-              <div>自駕大字模式</div>
-            </div>
-            <button class="pill-outline">暫未開啟</button>
-          </div>
-          <div class="sub-text" style="margin-top: 6px;">
-            啟用後，行程會以大字 & 高對比顯示，給副駕駛在車上看更清楚。
           </div>
         </div>
       </section>
@@ -867,47 +904,20 @@
             <button class="btn-primary">新增記錄</button>
           </div>
         </div>
-
-        <div class="section-title">今日紀錄</div>
-        <div class="card">
-          <div class="record-list">
-            <div class="record-item">
-              <div>
-                <div>🍙 弘大烤肉</div>
-                <div class="record-meta">你付款 · 共同分攤</div>
-              </div>
-              <div>₩ 48,000</div>
-            </div>
-            <div class="record-item">
-              <div>
-                <div>🚆 地鐵一日券</div>
-                <div class="record-meta">男友付款 · 共同分攤</div>
-              </div>
-              <div>₩ 10,000</div>
-            </div>
-            <div class="record-item">
-              <div>
-                <div>🛍️ 便利商店零食</div>
-                <div class="record-meta">你付款 · 個人自付</div>
-              </div>
-              <div>₩ 4,500</div>
-            </div>
-          </div>
-        </div>
       </section>
 
       <!-- 清單 Page -->
       <section class="page" id="page-list">
         <div class="section-title">打包進度</div>
         <div class="card">
-          <div class="card-header-row">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
             <div>
               <div>打包完成度 72%</div>
               <div class="sub-text">還有 6 件物品尚未勾選</div>
             </div>
             <button class="pill-outline">重新整理</button>
           </div>
-          <div class="progress-bar-wrap">
+          <div style="margin-top:8px;">
             <div class="progress-track">
               <div class="progress-fill"></div>
             </div>
@@ -916,7 +926,7 @@
 
         <div class="section-title">行李分類</div>
 
-        <div class="card group-card">
+        <div class="card">
           <div class="group-header">
             <div>👕 衣物</div>
             <div class="sub-text">5 / 8</div>
@@ -941,7 +951,7 @@
           </div>
         </div>
 
-        <div class="card group-card">
+        <div class="card">
           <div class="group-header">
             <div>🔌 3C & 充電</div>
             <div class="sub-text">3 / 5</div>
@@ -965,56 +975,13 @@
             </label>
           </div>
         </div>
-
-        <div class="card group-card">
-          <div class="group-header">
-            <div>💼 文件 & 現金</div>
-            <div class="sub-text">2 / 4</div>
-          </div>
-          <div class="checklist">
-            <label class="check-item">
-              <input type="checkbox" checked />
-              <span>護照</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" />
-              <span>現金 / 卡片</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" />
-              <span>eSIM / SIM 卡針</span>
-            </label>
-          </div>
-        </div>
       </section>
     </main>
-
-    <!-- 底部導航 -->
-    <nav class="bottom-nav">
-      <button class="nav-btn active" data-tab="home">
-        <span>🏠</span>
-        首頁
-      </button>
-      <button class="nav-btn" data-tab="trip">
-        <span>📅</span>
-        行程
-      </button>
-      <button class="nav-btn" data-tab="money">
-        <span>💰</span>
-        記帳
-      </button>
-      <button class="nav-btn" data-tab="list">
-        <span>✅</span>
-        清單
-      </button>
-    </nav>
   </div>
 
   <script>
-    // -----------------------
-    // Tab 切換
-    // -----------------------
-    const navButtons = document.querySelectorAll(".nav-btn");
+    // 上方分頁切換
+    const tabs = document.querySelectorAll(".top-tab");
     const pages = {
       home: document.getElementById("page-home"),
       trip: document.getElementById("page-trip"),
@@ -1022,21 +989,17 @@
       list: document.getElementById("page-list"),
     };
 
-    navButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const tab = btn.dataset.tab;
-
-        navButtons.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const key = tab.dataset.tab;
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
         Object.values(pages).forEach((p) => p.classList.remove("active"));
-        pages[tab].classList.add("active");
+        pages[key].classList.add("active");
       });
     });
 
-    // -----------------------
-    // 主題切換（沖繩 → 櫻花 → 夜景）
-    // -----------------------
+    // 主題切換：奶茶 → 櫻花 → 夜景
     const themeBtn = document.getElementById("themeBtn");
     const themes = ["okinawa", "sakura", "night"];
     let themeIndex = 0;
