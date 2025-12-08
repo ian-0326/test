@@ -255,7 +255,7 @@
     }
 
     /* -----------------------
-       首頁：匯率卡
+       首頁：匯率試算
     ------------------------ */
     .rate-title-row {
       display: flex;
@@ -271,8 +271,28 @@
       font-size: 14px;
     }
 
-    .rate-icon {
-      font-size: 18px;
+    /* 計算機小 icon */
+    .rate-icon.icon-calc {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+      position: relative;
+      background: color-mix(in srgb, var(--card-bg) 92%, transparent);
+    }
+    .rate-icon.icon-calc::before,
+    .rate-icon.icon-calc::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      border-top: 1px solid color-mix(in srgb, var(--border-soft) 90%, transparent);
+    }
+    .rate-icon.icon-calc::before {
+      top: 7px;   /* 顯示螢幕線 */
+    }
+    .rate-icon.icon-calc::after {
+      bottom: 6px; /* 顯示按鍵線 */
     }
 
     .rate-body {
@@ -290,11 +310,6 @@
       font-size: 11px;
       color: var(--text-sub);
       margin-bottom: 2px;
-    }
-
-    .rate-input {
-      font-size: 26px;
-      color: var(--text-main);
     }
 
     .rate-equal {
@@ -317,6 +332,24 @@
       align-items: center;
       margin-top: 8px;
       font-size: 12px;
+    }
+
+    .rate-input-field {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 24px;
+      color: var(--text-main);
+      padding: 4px 0;
+    }
+    .rate-input-field::-webkit-outer-spin-button,
+    .rate-input-field::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .rate-input-right {
+      text-align: right;
     }
 
     /* -----------------------
@@ -452,7 +485,7 @@
     }
 
     /* -----------------------
-       其他分頁沿用舊版樣式（簡化）
+       其他分頁沿用簡版樣式
     ------------------------ */
     .section-title {
       font-size: 14px;
@@ -696,36 +729,54 @@
     </div>
 
     <main>
-      <!-- 首頁 Page：排版比照截圖 -->
+      <!-- 首頁 Page -->
       <section class="page active" id="page-home">
-        <!-- 匯率試算卡 -->
+        <!-- 匯率試算卡（KRW ↔ TWD） -->
         <div class="card">
           <div class="rate-title-row">
             <div class="rate-title-left">
-              <span class="rate-icon">🧮</span>
+              <div class="rate-icon icon-calc"></div>
               <span>匯率試算</span>
             </div>
-            <button class="pill-outline" style="font-size:11px;">重整</button>
+            <button class="pill-outline" id="refreshRateBtn" style="font-size:11px;">
+              重新抓匯率
+            </button>
           </div>
 
           <div class="rate-body">
+            <!-- 韓幣 -->
             <div class="rate-col">
-              <div class="rate-label">JPY 日幣</div>
-              <div class="rate-input">0</div>
+              <div class="rate-label">KRW 韓幣</div>
+              <input
+                id="krwInput"
+                class="rate-input-field"
+                type="number"
+                inputmode="decimal"
+                placeholder="0"
+              />
               <div class="rate-line"></div>
             </div>
+
             <div class="rate-equal">＝</div>
+
+            <!-- 台幣 -->
             <div class="rate-col" style="text-align:right;">
               <div class="rate-label">TWD 台幣</div>
-              <div class="rate-input">0</div>
+              <input
+                id="twdInput"
+                class="rate-input-field rate-input-right"
+                type="number"
+                inputmode="decimal"
+                placeholder="0"
+              />
               <div class="rate-line"></div>
             </div>
           </div>
 
           <div class="rate-footer">
-            <div class="sub-text">匯率：0.202（示意）</div>
+            <div class="sub-text" id="rateText">匯率載入中…</div>
             <button class="pill-outline" style="font-size:11px;">
-              差 ¥5500 免稅
+              差 ₩5500 免稅（示意）
             </button>
           </div>
         </div>
@@ -795,7 +846,7 @@
         </div>
       </section>
 
-      <!-- 行程 Page（簡版，保留原來內容） -->
+      <!-- 行程 Page -->
       <section class="page" id="page-trip">
         <div class="section-title">日期</div>
         <div class="date-strip">
@@ -1023,6 +1074,90 @@
     themeBtn.addEventListener("click", () => {
       themeIndex = (themeIndex + 1) % themes.length;
       applyTheme();
+    });
+
+    // -----------------------
+    // 匯率試算：KRW ↔ TWD
+    // 使用 exchangerate.host API
+    // -----------------------
+    const krwInput = document.getElementById("krwInput");
+    const twdInput = document.getElementById("twdInput");
+    const rateText = document.getElementById("rateText");
+    const refreshRateBtn = document.getElementById("refreshRateBtn");
+
+    let rateKRWtoTWD = 0.022; // 預設值，避免載入失敗完全不能算
+    let isUpdating = false;   // 避免兩邊互相觸發造成迴圈
+
+    async function fetchRate() {
+      try {
+        rateText.textContent = "匯率載入中…";
+        const res = await fetch(
+          "https://api.exchangerate.host/latest?base=KRW&symbols=TWD"
+        );
+        const data = await res.json();
+        if (data && data.rates && data.rates.TWD) {
+          rateKRWtoTWD = data.rates.TWD;
+          rateText.textContent =
+            "匯率：約 1 KRW ≈ " + rateKRWtoTWD.toFixed(4) + " TWD";
+          // 重新計算一次（如果目前有輸入）
+          if (krwInput.value) {
+            const v = parseFloat(krwInput.value);
+            if (!isNaN(v)) {
+              isUpdating = true;
+              twdInput.value = (v * rateKRWtoTWD).toFixed(0);
+              isUpdating = false;
+            }
+          } else if (twdInput.value) {
+            const v = parseFloat(twdInput.value);
+            if (!isNaN(v)) {
+              isUpdating = true;
+              krwInput.value = (v / rateKRWtoTWD).toFixed(0);
+              isUpdating = false;
+            }
+          }
+        } else {
+          rateText.textContent = "匯率載入失敗，使用預設匯率。";
+        }
+      } catch (e) {
+        console.error(e);
+        rateText.textContent = "匯率載入失敗，使用預設匯率。";
+      }
+    }
+
+    // 頁面載入先抓一次
+    fetchRate();
+
+    // 手動重新抓匯率
+    refreshRateBtn.addEventListener("click", fetchRate);
+
+    // 由韓幣轉台幣
+    krwInput.addEventListener("input", () => {
+      if (isUpdating) return;
+      const v = parseFloat(krwInput.value);
+      if (isNaN(v)) {
+        isUpdating = true;
+        twdInput.value = "";
+        isUpdating = false;
+        return;
+      }
+      isUpdating = true;
+      twdInput.value = (v * rateKRWtoTWD).toFixed(0); // 取整數
+      isUpdating = false;
+    });
+
+    // 由台幣轉韓幣
+    twdInput.addEventListener("input", () => {
+      if (isUpdating) return;
+      const v = parseFloat(twdInput.value);
+      if (isNaN(v)) {
+        isUpdating = true;
+        krwInput.value = "";
+        isUpdating = false;
+        return;
+      }
+      isUpdating = true;
+      krwInput.value = (v / rateKRWtoTWD).toFixed(0);
+      isUpdating = false;
     });
   </script>
 </body>
