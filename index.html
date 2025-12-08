@@ -1202,7 +1202,6 @@
 
     // -----------------------
     // 匯率試算：TWD ↔ KRW
-    // 即時匯率 + 自訂匯率（視角：1 TWD = ? KRW）
     // -----------------------
     const krwInput = document.getElementById("krwInput");
     const twdInput = document.getElementById("twdInput");
@@ -1214,12 +1213,10 @@
     const labelLive = document.getElementById("labelLive");
     const labelCustom = document.getElementById("labelCustom");
 
-    // liveRateTWDToKRW：1 TWD 可換多少 KRW（即時）
-    let liveRateTWDToKRW = 45.0;
-    // rateTWDToKRW：目前實際計算用匯率（可能是 live 或 custom）
+    let liveRateTWDToKRW = 45.0;   // 1 TWD → ? KRW
     let rateTWDToKRW = liveRateTWDToKRW;
     let rateMode = "live"; // 'live' or 'custom'
-    let isUpdating = false; // 避免互相觸發
+    let isUpdating = false;
 
     function updateRateText() {
       if (rateMode === "live") {
@@ -1232,11 +1229,9 @@
 
     function updateSwitchLabels() {
       if (rateMode === "live") {
-        // 即時模式：僅顯示右邊「自訂」
         labelLive.style.opacity = 0;
         labelCustom.style.opacity = 1;
       } else {
-        // 自訂模式：僅顯示左邊「即時」
         labelLive.style.opacity = 1;
         labelCustom.style.opacity = 0;
       }
@@ -1261,9 +1256,6 @@
       const vK = parseFloat(krwInput.value);
       const vT = parseFloat(twdInput.value);
 
-      // 1 TWD = rateTWDToKRW KRW
-      // KRW → TWD = KRW / rate
-      // TWD → KRW = TWD * rate
       if (!isNaN(vK)) {
         isUpdating = true;
         twdInput.value = (vK / rateTWDToKRW).toFixed(0);
@@ -1279,14 +1271,12 @@
       try {
         rateText.textContent = "匯率載入中…";
 
-        // API 回傳：base=KRW，rates.TWD = 1 KRW 可換多少 TWD
         const res = await fetch("https://open.er-api.com/v6/latest/KRW");
         const data = await res.json();
 
         if (data && data.result === "success" && data.rates && data.rates.TWD) {
           const twdPerKrw = data.rates.TWD; // 1 KRW = twdPerKrw TWD
-          // 1 TWD = ? KRW → 1 / twdPerKrw
-          liveRateTWDToKRW = 1 / twdPerKrw;
+          liveRateTWDToKRW = 1 / twdPerKrw; // 1 TWD = ? KRW
 
           if (rateMode === "live") {
             rateTWDToKRW = liveRateTWDToKRW;
@@ -1304,16 +1294,14 @@
       }
     }
 
-    // 初次載入：抓一次即時匯率
+    // 初次載入
     fetchRate();
     applyModeUI();
 
-    // 手動重新抓匯率（只在即時模式顯示）
     refreshRateBtn.addEventListener("click", () => {
       fetchRate();
     });
 
-    // 模式切換：switch 左右（未勾=即時，勾選=自訂）
     rateModeToggle.addEventListener("change", () => {
       rateMode = rateModeToggle.checked ? "custom" : "live";
 
@@ -1332,7 +1320,6 @@
       applyModeUI();
     });
 
-    // 自訂匯率輸入變化（1 TWD = ? KRW）
     customRateInput.addEventListener("input", () => {
       if (rateMode !== "custom") return;
       const v = parseFloat(customRateInput.value);
@@ -1341,7 +1328,6 @@
       recalcFromInputs();
     });
 
-    // 由韓幣轉台幣：KRW → TWD
     krwInput.addEventListener("input", () => {
       if (isUpdating) return;
       const v = parseFloat(krwInput.value);
@@ -1356,7 +1342,6 @@
       isUpdating = false;
     });
 
-    // 由台幣轉韓幣：TWD → KRW
     twdInput.addEventListener("input", () => {
       if (isUpdating) return;
       const v = parseFloat(twdInput.value);
@@ -1370,6 +1355,56 @@
       krwInput.value = (v * rateTWDToKRW).toFixed(0);
       isUpdating = false;
     });
+
+    // -----------------------
+    // 盡量禁止縮放（iOS Safari 也一起處理）
+    // -----------------------
+    (function lockZoom() {
+      const vp = document.querySelector('meta[name="viewport"]');
+      if (vp) {
+        vp.setAttribute(
+          "content",
+          "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        );
+      }
+
+      // 禁用 pinch-zoom
+      document.addEventListener(
+        "gesturestart",
+        function (e) {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+      document.addEventListener(
+        "gesturechange",
+        function (e) {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+      document.addEventListener(
+        "gestureend",
+        function (e) {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+
+      // 禁用 double-tap zoom
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (e) {
+          const now = Date.now();
+          if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        { passive: false }
+      );
+    })();
   </script>
 </body>
 </html>
