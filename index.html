@@ -254,6 +254,11 @@
       font-weight: 600;
     }
 
+    .pill-outline.small {
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
     /* -----------------------
        首頁：匯率試算
     ------------------------ */
@@ -262,6 +267,7 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 6px;
+      gap: 10px;
     }
 
     .rate-title-left {
@@ -295,23 +301,82 @@
       bottom: 6px;
     }
 
-    /* 匯率模式切換 */
-    .rate-mode-switch {
-      display: flex;
-      justify-content: space-between;
+    /* 匯率模式 switch（右上角） */
+    .rate-switch {
+      position: relative;
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 6px;
-      gap: 8px;
+      cursor: pointer;
     }
 
-    .rate-mode-buttons {
-      display: flex;
-      gap: 6px;
+    .rate-switch input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
 
-    .pill-outline.small {
-      padding: 4px 10px;
-      font-size: 11px;
+    .rate-switch-track {
+      position: relative;
+      width: 70px;
+      height: 26px;
+      border-radius: 999px;
+      background: color-mix(in srgb, #000 16%, var(--card-bg));
+      transition: background 0.18s ease;
+      overflow: hidden;
+    }
+
+    .rate-switch-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: transform 0.18s ease;
+    }
+
+    .rate-switch-label {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: rgba(255,255,255,0.8);
+      pointer-events: none;
+      transition: opacity 0.18s ease, font-weight 0.18s ease;
+    }
+
+    .rate-switch-label-left {
+      left: 10px;
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    .rate-switch-label-right {
+      right: 8px;
+      opacity: 0.45;
+      font-weight: 400;
+    }
+
+    /* checked = 自訂匯率 */
+    .rate-switch input:checked + .rate-switch-track {
+      background: var(--primary);
+    }
+
+    .rate-switch input:checked + .rate-switch-track .rate-switch-thumb {
+      transform: translateX(40px);
+    }
+
+    .rate-switch input:checked + .rate-switch-track .rate-switch-label-left {
+      opacity: 0.45;
+      font-weight: 400;
+    }
+
+    .rate-switch input:checked + .rate-switch-track .rate-switch-label-right {
+      opacity: 1;
+      font-weight: 600;
     }
 
     .rate-body {
@@ -351,6 +416,7 @@
       align-items: center;
       margin-top: 6px;
       font-size: 12px;
+      gap: 10px;
     }
 
     .rate-input-field {
@@ -776,20 +842,16 @@
               <div class="rate-icon icon-calc"></div>
               <span>匯率試算</span>
             </div>
-            <button class="pill-outline small" id="refreshRateBtn">
-              重新抓匯率
-            </button>
-          </div>
 
-          <div class="rate-mode-switch">
-            <div class="rate-mode-buttons">
-              <button class="pill-outline small rate-mode-btn active" data-mode="live">
-                即時匯率
-              </button>
-              <button class="pill-outline small rate-mode-btn" data-mode="custom">
-                自訂匯率
-              </button>
-            </div>
+            <!-- 右上角左右開關：左=即時，右=自訂 -->
+            <label class="rate-switch">
+              <input type="checkbox" id="rateModeToggle" />
+              <span class="rate-switch-track">
+                <span class="rate-switch-thumb"></span>
+                <span class="rate-switch-label rate-switch-label-left">即時</span>
+                <span class="rate-switch-label rate-switch-label-right">自訂</span>
+              </span>
+            </label>
           </div>
 
           <div class="custom-rate-row" id="customRateRow">
@@ -836,6 +898,9 @@
 
           <div class="rate-footer">
             <div class="sub-text" id="rateText">匯率載入中…</div>
+            <button class="pill-outline small" id="refreshRateBtn">
+              匯率刷新
+            </button>
           </div>
         </div>
 
@@ -1142,9 +1207,9 @@
     const twdInput = document.getElementById("twdInput");
     const rateText = document.getElementById("rateText");
     const refreshRateBtn = document.getElementById("refreshRateBtn");
-    const modeButtons = document.querySelectorAll(".rate-mode-btn");
     const customRateRow = document.getElementById("customRateRow");
     const customRateInput = document.getElementById("customRateInput");
+    const rateModeToggle = document.getElementById("rateModeToggle");
 
     // liveRateTWDToKRW：1 TWD 可換多少 KRW（即時）
     let liveRateTWDToKRW = 45.0;
@@ -1167,7 +1232,6 @@
       const vK = parseFloat(krwInput.value);
       const vT = parseFloat(twdInput.value);
 
-      // 公式：
       // 1 TWD = rateTWDToKRW KRW
       // KRW → TWD = KRW / rate
       // TWD → KRW = TWD * rate
@@ -1221,37 +1285,30 @@
       fetchRate();
     });
 
-    // 模式切換：即時匯率 / 自訂匯率
-    modeButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const mode = btn.dataset.mode;
-        if (mode === rateMode) return;
+    // 模式切換：switch 左右（未勾=即時，勾選=自訂）
+    rateModeToggle.addEventListener("change", () => {
+      const mode = rateModeToggle.checked ? "custom" : "live";
+      if (mode === rateMode) return;
 
-        modeButtons.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        rateMode = mode;
+      rateMode = mode;
 
-        if (rateMode === "live") {
-          rateTWDToKRW = liveRateTWDToKRW;
-          customRateRow.style.display = "none";
-          refreshRateBtn.style.display = "inline-flex";
-          updateRateText();
-          recalcFromInputs();
-        } else {
-          customRateRow.style.display = "flex";
-          refreshRateBtn.style.display = "none";
-
-          if (!customRateInput.value) {
-            customRateInput.value = liveRateTWDToKRW.toFixed(2);
-          }
-          const v = parseFloat(customRateInput.value);
-          if (!isNaN(v) && v > 0) {
-            rateTWDToKRW = v;
-          }
-          updateRateText();
-          recalcFromInputs();
+      if (rateMode === "live") {
+        customRateRow.style.display = "none";
+        rateTWDToKRW = liveRateTWDToKRW;
+        updateRateText();
+        recalcFromInputs();
+      } else {
+        customRateRow.style.display = "flex";
+        if (!customRateInput.value) {
+          customRateInput.value = liveRateTWDToKRW.toFixed(2);
         }
-      });
+        const v = parseFloat(customRateInput.value);
+        if (!isNaN(v) && v > 0) {
+          rateTWDToKRW = v;
+        }
+        updateRateText();
+        recalcFromInputs();
+      }
     });
 
     // 自訂匯率輸入變化（1 TWD = ? KRW）
