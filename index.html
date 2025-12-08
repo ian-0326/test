@@ -366,7 +366,7 @@
     .weather-row {
       display: flex;
       justify-content: space-between;
-      text-align: center;
+      text向 center;
       font-size: 12px;
     }
 
@@ -485,7 +485,7 @@
     }
 
     /* -----------------------
-       其他分頁沿用簡版樣式
+       其他分頁簡版樣式
     ------------------------ */
     .section-title {
       font-size: 14px;
@@ -1078,28 +1078,29 @@
 
     // -----------------------
     // 匯率試算：KRW ↔ TWD
-    // 使用 exchangerate.host API
+    // 改用 open.er-api.com（免金鑰）
     // -----------------------
     const krwInput = document.getElementById("krwInput");
     const twdInput = document.getElementById("twdInput");
     const rateText = document.getElementById("rateText");
     const refreshRateBtn = document.getElementById("refreshRateBtn");
 
-    let rateKRWtoTWD = 0.022; // 預設值，避免載入失敗完全不能算
+    let rateKRWtoTWD = 0.022; // 預設值
     let isUpdating = false;   // 避免兩邊互相觸發造成迴圈
 
     async function fetchRate() {
       try {
         rateText.textContent = "匯率載入中…";
-        const res = await fetch(
-          "https://api.exchangerate.host/latest?base=KRW&symbols=TWD"
-        );
+
+        const res = await fetch("https://open.er-api.com/v6/latest/KRW");
         const data = await res.json();
-        if (data && data.rates && data.rates.TWD) {
+
+        if (data && data.result === "success" && data.rates && data.rates.TWD) {
           rateKRWtoTWD = data.rates.TWD;
           rateText.textContent =
             "匯率：約 1 KRW ≈ " + rateKRWtoTWD.toFixed(4) + " TWD";
-          // 重新計算一次（如果目前有輸入）
+
+          // 如果目前有輸入，就更新一次
           if (krwInput.value) {
             const v = parseFloat(krwInput.value);
             if (!isNaN(v)) {
@@ -1141,7 +1142,7 @@
         return;
       }
       isUpdating = true;
-      twdInput.value = (v * rateKRWtoTWD).toFixed(0); // 取整數
+      twdInput.value = (v * rateKRWtoTWD).toFixed(0);
       isUpdating = false;
     });
 
