@@ -482,15 +482,15 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-    .weather-temp {
+    .weather-temp-high {
       margin-top: 4px;
       font-size: 13px;
       font-weight: 500;
     }
-    .temp-low {
+    .weather-temp-low {
+      font-size: 11px;
       color: var(--text-sub);
-      font-weight: 400;
-      margin-left: 3px;
+      margin-top: 1px;
     }
 
     /* segment */
@@ -822,7 +822,10 @@
           <div class="weather-header-title">
             <span class="weather-head-icon">
               <svg viewBox="0 0 24 24">
-                <path d="M3 10.5V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-9.5l-9-6-9 6z"></path>
+                <!-- 地標感的定位 pin + 底部地面線 -->
+                <path d="M12 3a5 5 0 0 0-5 5c0 3.3 3.2 6.7 4.6 8.3.3.3.7.3 1 0C13.8 14.7 17 11.3 17 8a5 5 0 0 0-5-5z"></path>
+                <circle cx="12" cy="8" r="1.8"></circle>
+                <path d="M7 21h10"></path>
               </svg>
             </span>
             <span>Seoul</span>
@@ -1340,7 +1343,8 @@
           dayDiv.innerHTML = `
             <div>${label}</div>
             <div class="${accentClass}">${svg}</div>
-            <div class="weather-temp">${maxTemp}° <span class="temp-low">${minTemp}°</span></div>
+            <div class="weather-temp-high">${maxTemp}°</div>
+            <div class="weather-temp-low">${minTemp}°</div>
           `;
           weatherRow.appendChild(dayDiv);
         }
