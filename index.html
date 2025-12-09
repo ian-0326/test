@@ -234,6 +234,7 @@
       justify-content: center;
       gap: 6px;
       box-shadow: 0 14px 30px rgba(15, 23, 42, 0.35);
+      cursor: pointer;
     }
     .btn-ghost {
       border-radius: var(--radius-btn);
@@ -246,6 +247,7 @@
       gap: 6px;
       color: var(--text-main);
       background: color-mix(in srgb, var(--bg) 80%, transparent);
+      cursor: pointer;
     }
 
     .pill-outline {
@@ -255,6 +257,7 @@
       font-size: 11px;
       background: color-mix(in srgb, var(--bg-soft) 70%, var(--card-bg) 30%);
       color: var(--text-sub);
+      cursor: pointer;
     }
     .pill-outline.active {
       border-color: var(--accent);
@@ -528,7 +531,108 @@
       font-weight: 500;
     }
 
-    /* Visit Japan Web / 入境卡 */
+    /* 入境模式卡（旅伴列表） */
+    .entry-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      margin-bottom:10px;
+      gap:10px;
+    }
+    .entry-title-block{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .entry-title{
+      font-size:14px;
+      font-weight:500;
+    }
+    .entry-subtitle{
+      font-size:11px;
+      color:var(--text-sub);
+    }
+    .entry-list{
+      margin-top:8px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .traveler-card{
+      padding:10px 0 8px;
+      border-top:1px solid rgba(209,213,219,0.7);
+    }
+    .traveler-card:first-child{
+      border-top:none;
+    }
+    .traveler-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .traveler-avatar{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      background:linear-gradient(135deg,#f4f4f6,#e3e5eb);
+      border:1px solid rgba(209,213,219,0.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      font-weight:500;
+      color:var(--text-main);
+      box-shadow:0 8px 18px rgba(15,23,42,0.18);
+      text-align:center;
+      padding:4px;
+    }
+    .traveler-info{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .traveler-name{
+      font-size:13px;
+      font-weight:500;
+    }
+    .entry-upload{
+      border-radius:16px;
+      border:1px dashed rgba(209,213,219,0.9);
+      padding:8px;
+      background:color-mix(in srgb, var(--bg-soft) 60%, var(--card-bg) 40%);
+    }
+    .entry-preview{
+      width:100%;
+      border-radius:12px;
+      overflow:hidden;
+      background:rgba(243,244,246,0.95);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:80px;
+      position:relative;
+    }
+    .entry-preview img{
+      width:100%;
+      display:block;
+      object-fit:cover;
+      max-height:220px;
+    }
+    .entry-preview-placeholder{
+      font-size:11px;
+      color:var(--text-sub);
+    }
+    .entry-upload-actions{
+      margin-top:8px;
+      display:flex;
+      justify-content:flex-end;
+    }
+    .entry-upload-actions label{
+      cursor:pointer;
+    }
+
+    /* Visit Japan Web 舊樣式（暫不用，若未來要用可參考） */
     .vjw-header {
       display: flex;
       justify-content: space-between;
@@ -548,36 +652,6 @@
       font-size: 15px;
       background: radial-gradient(circle at top left, #ffffff 0, #f3f4f6 60%);
       box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-    }
-    .vjw-members { display: flex; gap: 6px; }
-    .vjw-pill {
-      border-radius: 999px;
-      padding: 4px 12px;
-      font-size: 12px;
-      border: 1px solid rgba(209, 213, 219, 0.95);
-      background: color-mix(in srgb, var(--bg-soft) 60%, var(--card-bg) 40%);
-      color: var(--text-sub);
-    }
-    .vjw-pill.active {
-      background: var(--primary-soft);
-      border-color: var(--primary);
-      color: var(--text-main);
-      font-weight: 500;
-    }
-    .vjw-placeholder {
-      border-radius: 18px;
-      border: 1px dashed rgba(209, 213, 219, 0.9);
-      height: 112px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      color: var(--text-sub);
-      background: linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--bg-soft) 70%, white 30%),
-        color-mix(in srgb, var(--bg) 80%, white 20%)
-      );
     }
 
     /* 走失模式卡 */
@@ -768,6 +842,46 @@
       color:var(--text-main);font-weight:500;
     }
 
+    /* Modal for 新增旅伴 */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:40;
+      backdrop-filter:blur(12px);
+    }
+    .modal{
+      width:100%;
+      max-width:320px;
+      background:var(--card-bg);
+      border-radius:20px;
+      padding:18px 18px 14px;
+      box-shadow:0 24px 60px rgba(15,23,42,0.55);
+      border:1px solid var(--card-border);
+    }
+    .modal-title{
+      font-size:15px;
+      font-weight:600;
+      margin-bottom:4px;
+    }
+    .modal-sub{
+      font-size:12px;
+      color:var(--text-sub);
+      margin-bottom:12px;
+    }
+    .modal-input{
+      margin-top:4px;
+      margin-bottom:12px;
+    }
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+    }
+
     @keyframes fadeIn{
       from{opacity:0;transform:translateY(4px);}
       to{opacity:1;transform:translateY(0);}
@@ -803,7 +917,7 @@
           <div class="brand-logo">🏙️</div>
           <div class="brand-title">K–TRIP</div>
         </div>
-      <div class="brand-sub">SEOUL JOURNEY PLANNER</div>
+        <div class="brand-sub">SEOUL JOURNEY PLANNER</div>
       </div>
       <div class="header-right">
         <div class="status-pill">
@@ -900,20 +1014,17 @@
           </div>
         </div>
 
-        <!-- 入境模式圖卡 -->
+        <!-- 入境模式圖卡（旅伴 + 入境卡） -->
         <div class="card" id="entryCard">
-          <div class="vjw-header">
-            <div class="vjw-left">
-              <div class="qr-box">▣</div>
-              <div>入境圖卡 · Visit Japan Web</div>
+          <div class="entry-header">
+            <div class="entry-title-block">
+              <div class="entry-title">入境圖卡 · Visit Japan Web</div>
+              <div class="entry-subtitle">幫每位旅伴收集入境 QR / 截圖，不怕有人漏存。</div>
             </div>
-            <div class="vjw-members">
-              <div class="vjw-pill">小朱</div>
-              <div class="vjw-pill active">簡哥</div>
-            </div>
+            <button class="pill-outline small" id="addTravelerBtn">＋ 新增旅伴</button>
           </div>
-          <div class="vjw-placeholder">
-            這裡可以擺放 QR Code 或登機前必備截圖，當成你的旅行入口。
+          <div class="entry-list" id="travelerList">
+            <!-- JS 動態注入旅伴 -->
           </div>
         </div>
 
@@ -1140,6 +1251,24 @@
         <div class="bottom-item" data-tab-bottom="list">
           <div class="bottom-item-icon">🧳</div>
           <div>清單</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 新增旅伴 Modal -->
+    <div class="modal-backdrop" id="nameModal">
+      <div class="modal">
+        <div class="modal-title">新增旅伴</div>
+        <div class="modal-sub">輸入要顯示在頭貼內的暱稱（最多 4 個字）</div>
+        <input
+          id="nameInput"
+          class="input-field modal-input"
+          maxlength="8"
+          placeholder="例如：我、小朱、簡哥"
+        />
+        <div class="modal-actions">
+          <button class="btn-ghost" id="cancelNameBtn">取消</button>
+          <button class="btn-primary" id="confirmNameBtn">加入</button>
         </div>
       </div>
     </div>
@@ -1449,19 +1578,25 @@
         entryCard.style.display = "block";
         lostCard.style.display = "none";
       } else {
-        entryCard.style.display = "none";
+        entryCard.style.display = "block"; // 仍保留在 DOM 中，只是下方切換卡片
         lostCard.style.display = "block";
       }
     }
 
     modeButtons.forEach(btn => {
-      btn.addEventListener("click", () => setMode(btn.dataset.mode));
+      btn.addEventListener("click", () => {
+        if (btn.dataset.mode === "entry") {
+          entryCard.style.display = "block";
+          lostCard.style.display = "none";
+        } else {
+          entryCard.style.display = "none";
+          lostCard.style.display = "block";
+        }
+        modeButtons.forEach(b => b.classList.toggle("active", b === btn));
+      });
     });
 
-    /* 走失模式 · 旅伴定位（前端 prototype）
-       備註：目前用 localStorage 保存同一台裝置的紀錄，
-       要做到「多人共用同一網址同步」之後需要接後端 API/WebSocket。
-    */
+    /* 走失模式 · 旅伴定位（前端 prototype）*/
     const locateBtn = document.getElementById("locateBtn");
     const publishBtn = document.getElementById("publishBtn");
     const locationStatus = document.getElementById("locationStatus");
@@ -1551,7 +1686,7 @@
         locationStatus.textContent = "請先點擊「取得目前位置」。";
         return;
       }
-      const name = "旅伴"; // 未來可以改成輸入旅伴名稱
+      const name = "旅伴"; // 未來可配合旅伴暱稱
       const post = {
         name,
         lat: currentPosition.lat,
@@ -1566,6 +1701,135 @@
     });
 
     loadLocationFeed();
+
+    /* 入境模式：旅伴 + 入境卡 */
+    const travelerList = document.getElementById("travelerList");
+    const addTravelerBtn = document.getElementById("addTravelerBtn");
+    const nameModal = document.getElementById("nameModal");
+    const nameInput = document.getElementById("nameInput");
+    const cancelNameBtn = document.getElementById("cancelNameBtn");
+    const confirmNameBtn = document.getElementById("confirmNameBtn");
+
+    let travelerIdCounter = 0;
+    let travelers = [];
+
+    function openNameModal() {
+      nameModal.style.display = "flex";
+      nameInput.value = "";
+      nameInput.focus();
+    }
+    function closeNameModal() {
+      nameModal.style.display = "none";
+    }
+
+    cancelNameBtn.addEventListener("click", closeNameModal);
+    nameModal.addEventListener("click", (e) => {
+      if (e.target === nameModal) closeNameModal();
+    });
+
+    confirmNameBtn.addEventListener("click", () => {
+      const raw = nameInput.value.trim();
+      const name = raw || `旅伴 ${travelers.length + 1}`;
+      addTraveler(name);
+      closeNameModal();
+    });
+
+    nameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        confirmNameBtn.click();
+      }
+    });
+
+    addTravelerBtn.addEventListener("click", openNameModal);
+
+    function createTravelerElement(traveler) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "traveler-card";
+      wrapper.dataset.id = traveler.id;
+
+      const initials = traveler.name.length > 4 ? traveler.name.slice(0, 4) : traveler.name;
+
+      wrapper.innerHTML = `
+        <div class="traveler-head">
+          <div class="traveler-avatar">
+            <span>${initials}</span>
+          </div>
+          <div class="traveler-info">
+            <div class="traveler-name">${traveler.name}</div>
+            <div class="sub-text" data-role="status">
+              ${traveler.image ? "已上傳入境卡圖片" : "入境卡尚未上傳"}
+            </div>
+          </div>
+        </div>
+        <div class="entry-upload">
+          <div class="entry-preview" data-role="preview">
+            ${
+              traveler.image
+                ? `<img src="${traveler.image}" alt="入境卡預覽" />`
+                : `<span class="entry-preview-placeholder">尚未選擇圖片 · 可用來放 QR 截圖或拍照</span>`
+            }
+          </div>
+          <div class="entry-upload-actions">
+            <label class="btn-ghost">
+              📷 拍照 / 上傳
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                class="entry-file-input"
+                hidden
+              />
+            </label>
+          </div>
+        </div>
+      `;
+
+      const fileInput = wrapper.querySelector(".entry-file-input");
+      const preview = wrapper.querySelector('[data-role="preview"]');
+      const statusText = wrapper.querySelector('[data-role="status"]');
+
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const url = e.target.result;
+          traveler.image = url;
+          preview.innerHTML = `<img src="${url}" alt="入境卡預覽" />`;
+          statusText.textContent = "已上傳入境卡圖片";
+        };
+        reader.readAsDataURL(file);
+      });
+
+      return wrapper;
+    }
+
+    function renderTravelers() {
+      travelerList.innerHTML = "";
+      travelers.forEach(t => {
+        travelerList.appendChild(createTravelerElement(t));
+      });
+      if (!travelers.length) {
+        const empty = document.createElement("div");
+        empty.className = "sub-text";
+        empty.textContent = "目前尚未新增任何旅伴。";
+        travelerList.appendChild(empty);
+      }
+    }
+
+    function addTraveler(name) {
+      const t = {
+        id: "traveler_" + (++travelerIdCounter),
+        name,
+        image: null,
+      };
+      travelers.push(t);
+      renderTravelers();
+    }
+
+    // 初始預設一位「我」
+    addTraveler("我");
 
     /* 鎖縮放（iOS） */
     (function lockZoom() {
