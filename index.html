@@ -28,6 +28,9 @@
       --radius-card: 24px;
       --radius-pill: 999px;
       --radius-btn: 999px;
+
+      --weather-muted: #c1c4cc;
+      --weather-accent: #b28a64;
     }
 
     /* 第二套色：偏紫灰（像 Moments 區） */
@@ -43,6 +46,9 @@
       --text-main: #111827;
       --text-sub: #9295a3;
       --shadow-soft: 0 18px 42px rgba(26, 32, 56, 0.16);
+
+      --weather-muted: #b9bcc7;
+      --weather-accent: #b9a3df;
     }
 
     /* 夜間：深灰＋香檳金 */
@@ -58,6 +64,9 @@
       --text-main: #f9fafb;
       --text-sub: #9ca3af;
       --shadow-soft: 0 22px 52px rgba(0, 0, 0, 0.72);
+
+      --weather-muted: #7c818f;
+      --weather-accent: #f0d59f;
     }
 
     * {
@@ -539,9 +548,152 @@
       flex: 1;
     }
 
+    /* 細線天氣 ICON（非 emoji） */
     .weather-icon {
-      font-size: 18px;
-      margin-bottom: 2px;
+      width: 24px;
+      height: 24px;
+      margin: 0 auto 2px;
+      position: relative;
+      color: var(--weather-muted);  /* 利用 currentColor 當作邊線顏色 */
+    }
+    .weather-icon::before,
+    .weather-icon::after {
+      content: "";
+      position: absolute;
+      box-sizing: border-box;
+    }
+    .weather-icon-accent {
+      color: var(--weather-accent);
+    }
+
+    /* ☀️ Sunny */
+    .icon-sun::before {
+      top: 50%;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.6px solid currentColor;
+      transform: translate(-50%, -50%);
+    }
+    .icon-sun::after {
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.2px solid currentColor;
+      opacity: 0.35;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ☁️ Cloud */
+    .icon-cloud::before {
+      left: 4px;
+      right: 4px;
+      bottom: 7px;
+      height: 10px;
+      border-radius: 12px;
+      border: 1.6px solid currentColor;
+    }
+    .icon-cloud::after {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.6px solid currentColor;
+      bottom: 9px;
+      left: 4px;
+      background: var(--card-bg);
+    }
+
+    /* 🌤 Partly Cloudy */
+    .icon-partly::before {
+      /* sun */
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.6px solid currentColor;
+      top: 6px;
+      left: 3px;
+      background: var(--card-bg);
+    }
+    .icon-partly::after {
+      /* cloud */
+      left: 7px;
+      right: 2px;
+      bottom: 6px;
+      height: 10px;
+      border-radius: 12px;
+      border: 1.6px solid currentColor;
+      background: var(--card-bg);
+    }
+
+    /* 🌧 Rain */
+    .icon-rain::before {
+      /* cloud */
+      left: 4px;
+      right: 4px;
+      bottom: 9px;
+      height: 10px;
+      border-radius: 12px;
+      border: 1.6px solid currentColor;
+      background: var(--card-bg);
+    }
+    .icon-rain::after {
+      /* drops */
+      left: 7px;
+      right: 7px;
+      bottom: 3px;
+      height: 6px;
+      background:
+        radial-gradient(circle at 0 100%, currentColor 0, currentColor 1px, transparent 2px),
+        radial-gradient(circle at 50% 100%, currentColor 0, currentColor 1px, transparent 2px),
+        radial-gradient(circle at 100% 100%, currentColor 0, currentColor 1px, transparent 2px);
+      opacity: 0.9;
+    }
+
+    /* ❄ Snow */
+    .icon-snow::before {
+      left: 4px;
+      right: 4px;
+      bottom: 9px;
+      height: 10px;
+      border-radius: 12px;
+      border: 1.6px solid currentColor;
+      background: var(--card-bg);
+    }
+    .icon-snow::after {
+      left: 7px;
+      right: 7px;
+      bottom: 3px;
+      height: 6px;
+      background:
+        radial-gradient(circle at 0 100%, currentColor 0, currentColor 1px, transparent 2px),
+        radial-gradient(circle at 50% 100%, currentColor 0, currentColor 1px, transparent 2px),
+        radial-gradient(circle at 100% 100%, currentColor 0, currentColor 1px, transparent 2px);
+      opacity: 0.55;
+    }
+
+    /* ⛈ Storm */
+    .icon-storm::before {
+      left: 4px;
+      right: 4px;
+      bottom: 9px;
+      height: 10px;
+      border-radius: 12px;
+      border: 1.6px solid currentColor;
+      background: var(--card-bg);
+    }
+    .icon-storm::after {
+      width: 8px;
+      height: 10px;
+      border-left: 1.6px solid transparent;
+      border-right: 1.6px solid transparent;
+      border-top: 1.6px solid currentColor;
+      border-bottom: 1.6px solid currentColor;
+      transform: skewX(-15deg);
+      left: 8px;
+      bottom: 1px;
     }
 
     .weather-temp {
@@ -904,6 +1056,9 @@
         --text-main: #f9fafb;
         --text-sub: #9ca3af;
         --shadow-soft: 0 22px 52px rgba(0, 0, 0, 0.72);
+
+        --weather-muted: #7c818f;
+        --weather-accent: #f0d59f;
       }
     }
   </style>
@@ -1017,7 +1172,7 @@
           </div>
         </div>
 
-        <!-- 一週天氣（改為即時資料） -->
+        <!-- 一週天氣（即時資料 + 線條 icon） -->
         <div class="card" id="weatherCard">
           <div class="weather-header">
             <div class="weather-header-title">Seoul · Weekly Outlook</div>
@@ -1473,20 +1628,19 @@
       isUpdating = false;
     });
 
-    // ---------- 天氣：抓取首爾官方開放資料 (Open-Meteo) ----------
+    // ---------- 天氣：抓取首爾官方開放資料 (Open-Meteo) + 線條 icon ----------
     const weatherLocationText = document.getElementById("weatherLocationText");
     const weatherRow = document.getElementById("weatherRow");
 
-    function mapWeatherIcon(code) {
-      if (code === 0) return "☀️";                    // 晴
-      if ([1, 2].includes(code)) return "🌤";         // 少雲
-      if (code === 3) return "⛅️";                   // 多雲
-      if ([45, 48].includes(code)) return "🌫";       // 霧
-      if ([51, 53, 55].includes(code)) return "🌦";   // 毛毛雨
-      if ([61, 63, 65, 80, 81, 82].includes(code)) return "🌧"; // 雨
-      if ([71, 73, 75, 77, 85, 86].includes(code)) return "❄️"; // 雪
-      if ([95, 96, 99].includes(code)) return "⛈";   // 雷雨
-      return "🌤";
+    function mapWeatherIconClass(code) {
+      if (code === 0) return "icon-sun"; // clear
+      if ([1, 2].includes(code)) return "icon-partly"; // mainly clear
+      if ([3, 45, 48].includes(code)) return "icon-cloud"; // cloudy / fog
+      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code))
+        return "icon-rain"; // rain
+      if ([71, 73, 75, 77, 85, 86].includes(code)) return "icon-snow"; // snow
+      if ([95, 96, 99].includes(code)) return "icon-storm"; // thunder
+      return "icon-partly";
     }
 
     async function fetchWeather() {
@@ -1516,13 +1670,14 @@
           const label = dayNames[d.getUTCDay()];
           const temp = Math.round(days.temperature_2m_max[i]);
           const code = days.weathercode[i];
-          const icon = mapWeatherIcon(code);
+          const iconClass = mapWeatherIconClass(code);
+          const accentClass = i === 0 ? "weather-icon-accent" : "";
 
           const dayDiv = document.createElement("div");
           dayDiv.className = "weather-day";
           dayDiv.innerHTML = `
             <div>${label}</div>
-            <div class="weather-icon">${icon}</div>
+            <div class="weather-icon ${iconClass} ${accentClass}"></div>
             <div class="weather-temp">${temp}°</div>
           `;
           weatherRow.appendChild(dayDiv);
