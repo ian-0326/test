@@ -520,6 +520,7 @@
       gap: 6px;
       background: transparent;
       color: var(--text-sub);
+      cursor: pointer;
     }
     .segment-btn.active {
       background: rgba(17, 24, 39, 0.95);
@@ -527,7 +528,7 @@
       font-weight: 500;
     }
 
-    /* Visit Japan Web */
+    /* Visit Japan Web / 入境卡 */
     .vjw-header {
       display: flex;
       justify-content: space-between;
@@ -577,6 +578,61 @@
         color-mix(in srgb, var(--bg-soft) 70%, white 30%),
         color-mix(in srgb, var(--bg) 80%, white 20%)
       );
+    }
+
+    /* 走失模式卡 */
+    .lost-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      margin-bottom:10px;
+    }
+    .lost-title {
+      font-size:14px;
+      font-weight:500;
+    }
+    .lost-subtitle {
+      font-size:11px;
+      color:var(--text-sub);
+      margin-top:2px;
+    }
+    .lost-status {
+      font-size:11px;
+      color:var(--text-sub);
+      margin-top:4px;
+    }
+    .lost-actions {
+      display:flex;
+      gap:8px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .lost-feed {
+      margin-top:12px;
+      border-top:1px solid rgba(209,213,219,0.7);
+      padding-top:8px;
+      max-height:160px;
+      overflow-y:auto;
+    }
+    .lost-feed-empty {
+      font-size:11px;
+      color:var(--text-sub);
+    }
+    .lost-item {
+      font-size:11px;
+      padding:6px 0;
+      border-bottom:1px dashed rgba(209,213,219,0.5);
+    }
+    .lost-item:last-child {
+      border-bottom:none;
+    }
+    .lost-item strong {
+      font-weight:500;
+    }
+    .lost-item a {
+      color:var(--accent);
+      text-decoration:none;
+      font-size:11px;
     }
 
     /* 其它分頁共用 */
@@ -747,7 +803,7 @@
           <div class="brand-logo">🏙️</div>
           <div class="brand-title">K–TRIP</div>
         </div>
-        <div class="brand-sub">SEOUL JOURNEY PLANNER</div>
+      <div class="brand-sub">SEOUL JOURNEY PLANNER</div>
       </div>
       <div class="header-right">
         <div class="status-pill">
@@ -822,7 +878,7 @@
           <div class="weather-header-title">
             <span class="weather-head-icon">
               <svg viewBox="0 0 24 24">
-                <!-- 地標感的定位 pin + 底部地面線 -->
+                <!-- 地標 pin -->
                 <path d="M12 3a5 5 0 0 0-5 5c0 3.3 3.2 6.7 4.6 8.3.3.3.7.3 1 0C13.8 14.7 17 11.3 17 8a5 5 0 0 0-5-5z"></path>
                 <circle cx="12" cy="8" r="1.8"></circle>
                 <path d="M7 21h10"></path>
@@ -836,20 +892,20 @@
           </div>
         </div>
 
-        <!-- segment -->
+        <!-- 模式切換：入境 / 走失 -->
         <div class="segment-wrap">
-          <div class="segment">
-            <button class="segment-btn active">✈️ 入境模式</button>
-            <button class="segment-btn">🚗 自駕模式</button>
+          <div class="segment" id="modeSegment">
+            <button class="segment-btn active" data-mode="entry">✈️ 入境模式</button>
+            <button class="segment-btn" data-mode="lost">🧭 走失模式</button>
           </div>
         </div>
 
-        <!-- Visit Japan Web 區 -->
-        <div class="card">
+        <!-- 入境模式圖卡 -->
+        <div class="card" id="entryCard">
           <div class="vjw-header">
             <div class="vjw-left">
               <div class="qr-box">▣</div>
-              <div>Visit Japan Web</div>
+              <div>入境圖卡 · Visit Japan Web</div>
             </div>
             <div class="vjw-members">
               <div class="vjw-pill">小朱</div>
@@ -858,6 +914,28 @@
           </div>
           <div class="vjw-placeholder">
             這裡可以擺放 QR Code 或登機前必備截圖，當成你的旅行入口。
+          </div>
+        </div>
+
+        <!-- 走失模式圖卡 -->
+        <div class="card" id="lostCard" style="display:none;">
+          <div class="lost-header">
+            <div>
+              <div class="lost-title">走失模式 · 旅伴定位</div>
+              <div class="lost-subtitle">一鍵取得目前位置，發布給一起使用此頁面的旅伴。</div>
+              <div class="lost-status" id="locationStatus">
+                尚未取得位置。建議開啟 GPS 與定位權限。
+              </div>
+            </div>
+          </div>
+
+          <div class="lost-actions">
+            <button class="btn-ghost" id="locateBtn">📍 取得目前位置</button>
+            <button class="btn-primary" id="publishBtn">🚨 發布位置給旅伴</button>
+          </div>
+
+          <div class="lost-feed" id="locationFeed">
+            <div class="lost-feed-empty">目前尚無任何位置發布紀錄。</div>
           </div>
         </div>
       </section>
@@ -1261,7 +1339,7 @@
             <line x1="17.5" y1="6.5" x2="19" y2="5"></line>
           </svg>`;
       }
-      // 1–2: 晴時多雲（左上小太陽 + 柔順雲線）
+      // 1–2: 晴時多雲
       if ([1, 2].includes(code)) {
         return `
           <svg viewBox="0 0 24 24">
@@ -1356,6 +1434,138 @@
     }
 
     fetchWeather();
+
+    /* 入境模式 / 走失模式 切換 */
+    const modeSegment = document.getElementById("modeSegment");
+    const modeButtons = modeSegment.querySelectorAll(".segment-btn");
+    const entryCard = document.getElementById("entryCard");
+    const lostCard = document.getElementById("lostCard");
+
+    function setMode(mode) {
+      modeButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === mode);
+      });
+      if (mode === "entry") {
+        entryCard.style.display = "block";
+        lostCard.style.display = "none";
+      } else {
+        entryCard.style.display = "none";
+        lostCard.style.display = "block";
+      }
+    }
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
+    });
+
+    /* 走失模式 · 旅伴定位（前端 prototype）
+       備註：目前用 localStorage 保存同一台裝置的紀錄，
+       要做到「多人共用同一網址同步」之後需要接後端 API/WebSocket。
+    */
+    const locateBtn = document.getElementById("locateBtn");
+    const publishBtn = document.getElementById("publishBtn");
+    const locationStatus = document.getElementById("locationStatus");
+    const locationFeed = document.getElementById("locationFeed");
+
+    let currentPosition = null;
+    let locationPosts = [];
+
+    function loadLocationFeed() {
+      try {
+        const raw = localStorage.getItem("ktm_lost_locations");
+        if (!raw) {
+          locationPosts = [];
+        } else {
+          locationPosts = JSON.parse(raw);
+        }
+      } catch (e) {
+        locationPosts = [];
+      }
+      renderLocationFeed();
+    }
+
+    function saveLocationFeed() {
+      try {
+        localStorage.setItem("ktm_lost_locations", JSON.stringify(locationPosts));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderLocationFeed() {
+      locationFeed.innerHTML = "";
+      if (!locationPosts.length) {
+        locationFeed.innerHTML = `<div class="lost-feed-empty">目前尚無任何位置發布紀錄。</div>`;
+        return;
+      }
+      locationPosts
+        .slice()
+        .reverse()
+        .forEach(item => {
+          const div = document.createElement("div");
+          div.className = "lost-item";
+          const timeStr = new Date(item.timestamp).toLocaleString();
+          const mapUrl = `https://maps.google.com/?q=${item.lat},${item.lng}`;
+          div.innerHTML = `
+            <div><strong>${item.name || "旅伴"}</strong> · ${timeStr}</div>
+            <div>座標：${item.lat.toFixed(5)}, ${item.lng.toFixed(5)}（誤差約 ${Math.round(item.accuracy)}m）</div>
+            <div><a href="${mapUrl}" target="_blank" rel="noopener noreferrer">在地圖中開啟</a></div>
+          `;
+          locationFeed.appendChild(div);
+        });
+    }
+
+    locateBtn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        locationStatus.textContent = "此裝置不支援定位功能。";
+        return;
+      }
+      locationStatus.textContent = "取得定位中…";
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          currentPosition = { lat: latitude, lng: longitude, accuracy };
+          locationStatus.textContent =
+            `已取得目前位置：${latitude.toFixed(5)}, ${longitude.toFixed(5)}（誤差約 ${Math.round(accuracy)}m）`;
+        },
+        err => {
+          console.error(err);
+          if (err.code === 1) {
+            locationStatus.textContent = "定位被拒絕，請在瀏覽器或系統設定中開啟定位權限。";
+          } else if (err.code === 2) {
+            locationStatus.textContent = "無法取得位置（訊號不佳或裝置沒有 GPS）。";
+          } else {
+            locationStatus.textContent = "取得位置時發生錯誤，請稍後再試。";
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    });
+
+    publishBtn.addEventListener("click", () => {
+      if (!currentPosition) {
+        locationStatus.textContent = "請先點擊「取得目前位置」。";
+        return;
+      }
+      const name = "旅伴"; // 未來可以改成輸入旅伴名稱
+      const post = {
+        name,
+        lat: currentPosition.lat,
+        lng: currentPosition.lng,
+        accuracy: currentPosition.accuracy,
+        timestamp: Date.now(),
+      };
+      locationPosts.push(post);
+      saveLocationFeed();
+      renderLocationFeed();
+      locationStatus.textContent = "位置已發布，旅伴重新載入此頁即可看到最新紀錄。";
+    });
+
+    loadLocationFeed();
 
     /* 鎖縮放（iOS） */
     (function lockZoom() {
