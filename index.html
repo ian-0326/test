@@ -532,6 +532,7 @@
       justify-content: space-between;
       text-align: center;
       font-size: 12px;
+      min-height: 64px;
     }
 
     .weather-day {
@@ -1016,37 +1017,15 @@
           </div>
         </div>
 
-        <!-- 一週天氣 -->
-        <div class="card">
+        <!-- 一週天氣（改為即時資料） -->
+        <div class="card" id="weatherCard">
           <div class="weather-header">
             <div class="weather-header-title">Seoul · Weekly Outlook</div>
-            <div class="sub-text">Incheon / KR</div>
+            <div class="sub-text" id="weatherLocationText">資料載入中…</div>
           </div>
-          <div class="weather-row">
-            <div class="weather-day">
-              <div>Sat</div>
-              <div class="weather-icon">☀️</div>
-              <div class="weather-temp">22°</div>
-            </div>
-            <div class="weather-day">
-              <div>Sun</div>
-              <div class="weather-icon">⛅️</div>
-              <div class="weather-temp">20°</div>
-            </div>
-            <div class="weather-day">
-              <div>Mon</div>
-              <div class="weather-icon">☀️</div>
-              <div class="weather-temp">23°</div>
-            </div>
-            <div class="weather-day">
-              <div>Tue</div>
-              <div class="weather-icon">⛅️</div>
-              <div class="weather-temp">24°</div>
-            </div>
-            <div class="weather-day">
-              <div>Wed</div>
-              <div class="weather-icon">☀️</div>
-              <div class="weather-temp">25°</div>
+          <div class="weather-row" id="weatherRow">
+            <div class="sub-text" style="flex:1;text-align:center;">
+              取得天氣資料中…
             </div>
           </div>
         </div>
@@ -1493,6 +1472,72 @@
       krwInput.value = (v * rateTWDToKRW).toFixed(0);
       isUpdating = false;
     });
+
+    // ---------- 天氣：抓取首爾官方開放資料 (Open-Meteo) ----------
+    const weatherLocationText = document.getElementById("weatherLocationText");
+    const weatherRow = document.getElementById("weatherRow");
+
+    function mapWeatherIcon(code) {
+      if (code === 0) return "☀️";                    // 晴
+      if ([1, 2].includes(code)) return "🌤";         // 少雲
+      if (code === 3) return "⛅️";                   // 多雲
+      if ([45, 48].includes(code)) return "🌫";       // 霧
+      if ([51, 53, 55].includes(code)) return "🌦";   // 毛毛雨
+      if ([61, 63, 65, 80, 81, 82].includes(code)) return "🌧"; // 雨
+      if ([71, 73, 75, 77, 85, 86].includes(code)) return "❄️"; // 雪
+      if ([95, 96, 99].includes(code)) return "⛈";   // 雷雨
+      return "🌤";
+    }
+
+    async function fetchWeather() {
+      try {
+        weatherLocationText.textContent = "資料更新中…";
+        weatherRow.innerHTML =
+          `<div class="sub-text" style="flex:1;text-align:center;">取得天氣資料中…</div>`;
+
+        // 首爾市中心座標：37.57, 126.98
+        const url =
+          "https://api.open-meteo.com/v1/forecast?latitude=37.57&longitude=126.98&daily=weathercode,temperature_2m_max&timezone=Asia%2FSeoul";
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.daily || !data.daily.time) {
+          throw new Error("No daily weather");
+        }
+
+        const days = data.daily;
+        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        weatherRow.innerHTML = "";
+        for (let i = 0; i < 5; i++) {
+          const dateStr = days.time[i];
+          const d = new Date(dateStr + "T00:00:00+09:00");
+          const label = dayNames[d.getUTCDay()];
+          const temp = Math.round(days.temperature_2m_max[i]);
+          const code = days.weathercode[i];
+          const icon = mapWeatherIcon(code);
+
+          const dayDiv = document.createElement("div");
+          dayDiv.className = "weather-day";
+          dayDiv.innerHTML = `
+            <div>${label}</div>
+            <div class="weather-icon">${icon}</div>
+            <div class="weather-temp">${temp}°</div>
+          `;
+          weatherRow.appendChild(dayDiv);
+        }
+
+        weatherLocationText.textContent = "資料來源：Open-Meteo · Seoul / KR";
+      } catch (e) {
+        console.error(e);
+        weatherLocationText.textContent = "天氣資料載入失敗";
+        weatherRow.innerHTML =
+          `<div class="sub-text" style="flex:1;text-align:center;">請稍後再試一次</div>`;
+      }
+    }
+
+    fetchWeather();
 
     // 鎖縮放（iOS Safari）
     (function lockZoom() {
