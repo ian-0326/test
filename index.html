@@ -11,7 +11,7 @@
 
   <style>
     /* ========================
-       基礎韓系極簡主題（霧面飯店感）
+       基礎韓系極簡主題
     ========================= */
     :root {
       --bg: #f1f2f4;
@@ -20,7 +20,7 @@
       --card-border: rgba(209, 213, 219, 0.7);
       --primary: #1f2933;
       --primary-soft: rgba(31, 41, 51, 0.06);
-      --accent: #c6a98b;        /* 溫暖沙色點綴 */
+      --accent: #c6a98b;
       --accent-soft: rgba(198, 169, 139, 0.12);
       --text-main: #111827;
       --text-sub: #8b9098;
@@ -33,7 +33,6 @@
       --weather-accent: #b28a64;
     }
 
-    /* 第二套色：偏紫灰（像 Moments 區） */
     :root[data-theme="lilac"] {
       --bg: #f4f3f7;
       --bg-soft: #ecebf3;
@@ -51,7 +50,6 @@
       --weather-accent: #b9a3df;
     }
 
-    /* 夜間：深灰＋香檳金 */
     :root[data-theme="midnight"] {
       --bg: #101119;
       --bg-soft: #161822;
@@ -91,13 +89,11 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding-bottom: 64px; /* 給底部圓角 bar 空間 */
+      padding-bottom: 64px;
       position: relative;
     }
 
-    /* ========================
-       Header 區塊
-    ========================= */
+    /* Header */
     .app-header {
       padding: 12px 20px 6px;
       display: flex;
@@ -114,43 +110,34 @@
         transparent
       );
     }
-
     .brand {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
-
     .brand-primary {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-
-    .brand-logo {
-      font-size: 18px;
-    }
-
+    .brand-logo { font-size: 18px; }
     .brand-title {
       font-family: "SF Pro Display", "Times New Roman", serif;
       font-size: 17px;
       letter-spacing: 0.24em;
       text-transform: uppercase;
     }
-
     .brand-sub {
       font-size: 11px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-sub);
     }
-
     .header-right {
       display: flex;
       gap: 8px;
       align-items: center;
     }
-
     .status-pill {
       border-radius: 999px;
       padding: 4px 10px;
@@ -162,11 +149,7 @@
       gap: 4px;
       border: 1px solid rgba(22, 163, 74, 0.18);
     }
-
-    .status-pill span {
-      font-size: 13px;
-    }
-
+    .status-pill span { font-size: 13px; }
     .icon-btn {
       border: none;
       background: color-mix(in srgb, var(--card-bg) 80%, transparent);
@@ -180,14 +163,9 @@
       color: var(--text-main);
       border: 1px solid rgba(148, 163, 184, 0.3);
     }
+    .icon-btn span { font-size: 15px; }
 
-    .icon-btn span {
-      font-size: 15px;
-    }
-
-    /* ========================
-       上方 Tab：改成細線韓系
-    ========================= */
+    /* Top tabs */
     .top-tabs {
       display: flex;
       justify-content: center;
@@ -201,7 +179,6 @@
       backdrop-filter: blur(14px);
       background: color-mix(in srgb, var(--bg) 92%, transparent);
     }
-
     .top-tab {
       position: relative;
       padding-bottom: 6px;
@@ -210,12 +187,10 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
-
     .top-tab.active {
       color: var(--text-main);
       font-weight: 500;
     }
-
     .top-tab.active::after {
       content: "";
       position: absolute;
@@ -228,22 +203,12 @@
       background: var(--accent);
     }
 
-    /* ========================
-       主內容與卡片
-    ========================= */
     main {
       flex: 1;
       padding: 14px 18px 24px;
     }
-
-    .page {
-      display: none;
-      animation: fadeIn 0.2s ease-out;
-    }
-
-    .page.active {
-      display: block;
-    }
+    .page { display: none; animation: fadeIn 0.2s ease-out; }
+    .page.active { display: block; }
 
     .card {
       background: var(--card-bg);
@@ -253,16 +218,9 @@
       box-shadow: var(--shadow-soft);
       border: 1px solid var(--card-border);
     }
+    .card-hero { padding-top: 20px; padding-bottom: 20px; }
 
-    .card-hero {
-      padding-top: 20px;
-      padding-bottom: 20px;
-    }
-
-    .sub-text {
-      font-size: 11px;
-      color: var(--text-sub);
-    }
+    .sub-text { font-size: 11px; color: var(--text-sub); }
 
     .btn-primary {
       border-radius: var(--radius-btn);
@@ -277,7 +235,6 @@
       gap: 6px;
       box-shadow: 0 14px 30px rgba(15, 23, 42, 0.35);
     }
-
     .btn-ghost {
       border-radius: var(--radius-btn);
       border: 1px solid rgba(148, 163, 184, 0.45);
@@ -299,22 +256,15 @@
       background: color-mix(in srgb, var(--bg-soft) 70%, var(--card-bg) 30%);
       color: var(--text-sub);
     }
-
     .pill-outline.active {
       border-color: var(--accent);
       background: var(--accent-soft);
       color: var(--text-main);
       font-weight: 500;
     }
+    .pill-outline.small { padding: 4px 12px; font-size: 11px; }
 
-    .pill-outline.small {
-      padding: 4px 12px;
-      font-size: 11px;
-    }
-
-    /* ========================
-       匯率試算卡樣式
-    ========================= */
+    /* 匯率卡 */
     .rate-title-row {
       display: flex;
       align-items: center;
@@ -322,27 +272,23 @@
       margin-bottom: 10px;
       gap: 10px;
     }
-
     .rate-title-left {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
-
     .rate-title-main {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 14px;
     }
-
     .rate-subtitle {
       font-size: 11px;
       color: var(--text-sub);
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-
     .rate-icon.icon-calc {
       width: 28px;
       height: 28px;
@@ -360,28 +306,21 @@
       right: 6px;
       border-top: 1px solid rgba(209, 213, 219, 0.9);
     }
-    .rate-icon.icon-calc::before {
-      top: 9px;
-    }
-    .rate-icon.icon-calc::after {
-      bottom: 8px;
-    }
+    .rate-icon.icon-calc::before { top: 9px; }
+    .rate-icon.icon-calc::after { bottom: 8px; }
 
-    /* 模式 switch（右上角） */
     .rate-switch {
       position: relative;
       display: inline-flex;
       align-items: center;
       cursor: pointer;
     }
-
     .rate-switch input {
       position: absolute;
       opacity: 0;
       width: 0;
       height: 0;
     }
-
     .rate-switch-track {
       position: relative;
       width: 82px;
@@ -392,7 +331,6 @@
       overflow: hidden;
       border: 1px solid rgba(148, 163, 184, 0.5);
     }
-
     .rate-switch-thumb {
       position: absolute;
       top: 3px;
@@ -404,7 +342,6 @@
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.25);
       transition: transform 0.18s ease;
     }
-
     .rate-switch-label {
       position: absolute;
       top: 50%;
@@ -418,21 +355,11 @@
       opacity: 0;
       transition: opacity 0.15s ease;
     }
-
-    .rate-switch-label-left {
-      left: 10px;
-      text-align: left;
-    }
-
-    .rate-switch-label-right {
-      right: 10px;
-      text-align: right;
-    }
-
+    .rate-switch-label-left { left: 10px; text-align: left; }
+    .rate-switch-label-right { right: 10px; text-align: right; }
     .rate-switch input:checked + .rate-switch-track {
       background: var(--primary);
     }
-
     .rate-switch input:checked + .rate-switch-track .rate-switch-thumb {
       transform: translateX(48px);
     }
@@ -444,11 +371,7 @@
       margin: 6px 0 10px;
       gap: 10px;
     }
-
-    .rate-col {
-      flex: 1;
-    }
-
+    .rate-col { flex: 1; }
     .rate-label {
       font-size: 11px;
       color: var(--text-sub);
@@ -456,21 +379,18 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-
     .rate-equal {
       width: 40px;
       text-align: center;
       font-size: 20px;
       color: var(--text-sub);
     }
-
     .rate-line {
       margin-top: 4px;
       height: 1px;
       width: 100%;
       background: rgba(209, 213, 219, 0.9);
     }
-
     .rate-footer {
       display: flex;
       justify-content: space-between;
@@ -479,7 +399,6 @@
       font-size: 11px;
       gap: 10px;
     }
-
     .rate-input-field {
       width: 100%;
       border: none;
@@ -496,9 +415,7 @@
       -webkit-appearance: none;
       margin: 0;
     }
-    .rate-input-right {
-      text-align: right;
-    }
+    .rate-input-right { text-align: right; }
 
     .custom-rate-row {
       display: none;
@@ -508,7 +425,6 @@
       font-size: 11px;
       color: var(--text-sub);
     }
-
     .custom-rate-row input {
       width: 90px;
       border-radius: 999px;
@@ -519,9 +435,7 @@
       color: var(--text-main);
     }
 
-    /* ========================
-       天氣卡 ＋ Segment
-    ========================= */
+    /* 天氣卡 */
     .weather-header {
       display: flex;
       justify-content: space-between;
@@ -529,13 +443,11 @@
       margin-bottom: 12px;
       font-size: 13px;
     }
-
     .weather-header-title {
       font-size: 13px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-
     .weather-row {
       display: flex;
       justify-content: space-between;
@@ -543,157 +455,26 @@
       font-size: 12px;
       min-height: 64px;
     }
+    .weather-day { flex: 1; }
 
-    .weather-day {
-      flex: 1;
-    }
-
-    /* 細線天氣 ICON（非 emoji） */
-    .weather-icon {
-      width: 24px;
-      height: 24px;
+    /* 新的 SVG icon 容器 */
+    .weather-icon-svg {
+      width: 26px;
+      height: 26px;
       margin: 0 auto 2px;
-      position: relative;
-      color: var(--weather-muted);  /* 利用 currentColor 當作邊線顏色 */
+      color: var(--weather-muted);
     }
-    .weather-icon::before,
-    .weather-icon::after {
-      content: "";
-      position: absolute;
-      box-sizing: border-box;
-    }
-    .weather-icon-accent {
+    .weather-icon-svg.accent {
       color: var(--weather-accent);
     }
-
-    /* ☀️ Sunny */
-    .icon-sun::before {
-      top: 50%;
-      left: 50%;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 1.6px solid currentColor;
-      transform: translate(-50%, -50%);
-    }
-    .icon-sun::after {
-      top: 50%;
-      left: 50%;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 1.2px solid currentColor;
-      opacity: 0.35;
-      transform: translate(-50%, -50%);
-    }
-
-    /* ☁️ Cloud */
-    .icon-cloud::before {
-      left: 4px;
-      right: 4px;
-      bottom: 7px;
-      height: 10px;
-      border-radius: 12px;
-      border: 1.6px solid currentColor;
-    }
-    .icon-cloud::after {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 1.6px solid currentColor;
-      bottom: 9px;
-      left: 4px;
-      background: var(--card-bg);
-    }
-
-    /* 🌤 Partly Cloudy */
-    .icon-partly::before {
-      /* sun */
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 1.6px solid currentColor;
-      top: 6px;
-      left: 3px;
-      background: var(--card-bg);
-    }
-    .icon-partly::after {
-      /* cloud */
-      left: 7px;
-      right: 2px;
-      bottom: 6px;
-      height: 10px;
-      border-radius: 12px;
-      border: 1.6px solid currentColor;
-      background: var(--card-bg);
-    }
-
-    /* 🌧 Rain */
-    .icon-rain::before {
-      /* cloud */
-      left: 4px;
-      right: 4px;
-      bottom: 9px;
-      height: 10px;
-      border-radius: 12px;
-      border: 1.6px solid currentColor;
-      background: var(--card-bg);
-    }
-    .icon-rain::after {
-      /* drops */
-      left: 7px;
-      right: 7px;
-      bottom: 3px;
-      height: 6px;
-      background:
-        radial-gradient(circle at 0 100%, currentColor 0, currentColor 1px, transparent 2px),
-        radial-gradient(circle at 50% 100%, currentColor 0, currentColor 1px, transparent 2px),
-        radial-gradient(circle at 100% 100%, currentColor 0, currentColor 1px, transparent 2px);
-      opacity: 0.9;
-    }
-
-    /* ❄ Snow */
-    .icon-snow::before {
-      left: 4px;
-      right: 4px;
-      bottom: 9px;
-      height: 10px;
-      border-radius: 12px;
-      border: 1.6px solid currentColor;
-      background: var(--card-bg);
-    }
-    .icon-snow::after {
-      left: 7px;
-      right: 7px;
-      bottom: 3px;
-      height: 6px;
-      background:
-        radial-gradient(circle at 0 100%, currentColor 0, currentColor 1px, transparent 2px),
-        radial-gradient(circle at 50% 100%, currentColor 0, currentColor 1px, transparent 2px),
-        radial-gradient(circle at 100% 100%, currentColor 0, currentColor 1px, transparent 2px);
-      opacity: 0.55;
-    }
-
-    /* ⛈ Storm */
-    .icon-storm::before {
-      left: 4px;
-      right: 4px;
-      bottom: 9px;
-      height: 10px;
-      border-radius: 12px;
-      border: 1.6px solid currentColor;
-      background: var(--card-bg);
-    }
-    .icon-storm::after {
-      width: 8px;
-      height: 10px;
-      border-left: 1.6px solid transparent;
-      border-right: 1.6px solid transparent;
-      border-top: 1.6px solid currentColor;
-      border-bottom: 1.6px solid currentColor;
-      transform: skewX(-15deg);
-      left: 8px;
-      bottom: 1px;
+    .weather-icon-svg svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .weather-temp {
@@ -701,12 +482,12 @@
       font-size: 13px;
     }
 
+    /* segment */
     .segment-wrap {
       margin-top: 16px;
       display: flex;
       justify-content: center;
     }
-
     .segment {
       background: color-mix(in srgb, var(--card-bg) 90%, var(--bg-soft) 10%);
       border-radius: 999px;
@@ -717,7 +498,6 @@
       width: 100%;
       max-width: 380px;
     }
-
     .segment-btn {
       flex: 1;
       border: none;
@@ -730,16 +510,13 @@
       background: transparent;
       color: var(--text-sub);
     }
-
     .segment-btn.active {
       background: rgba(17, 24, 39, 0.95);
       color: #f9fafb;
       font-weight: 500;
     }
 
-    /* ========================
-       Visit Japan Web 卡
-    ========================= */
+    /* Visit Japan Web */
     .vjw-header {
       display: flex;
       justify-content: space-between;
@@ -747,13 +524,7 @@
       margin-bottom: 12px;
       font-size: 14px;
     }
-
-    .vjw-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .vjw-left { display: flex; align-items: center; gap: 10px; }
     .qr-box {
       width: 28px;
       height: 28px;
@@ -766,12 +537,7 @@
       background: radial-gradient(circle at top left, #ffffff 0, #f3f4f6 60%);
       box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
     }
-
-    .vjw-members {
-      display: flex;
-      gap: 6px;
-    }
-
+    .vjw-members { display: flex; gap: 6px; }
     .vjw-pill {
       border-radius: 999px;
       padding: 4px 12px;
@@ -780,14 +546,12 @@
       background: color-mix(in srgb, var(--bg-soft) 60%, var(--card-bg) 40%);
       color: var(--text-sub);
     }
-
     .vjw-pill.active {
       background: var(--primary-soft);
       border-color: var(--primary);
       color: var(--text-main);
       font-weight: 500;
     }
-
     .vjw-placeholder {
       border-radius: 18px;
       border: 1px dashed rgba(209, 213, 219, 0.9);
@@ -804,9 +568,7 @@
       );
     }
 
-    /* ========================
-       其他分頁（行程 / 記帳 / 清單）
-    ========================= */
+    /* 其它分頁共用 */
     .section-title {
       font-size: 12px;
       margin: 8px 4px 4px;
@@ -814,7 +576,6 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
     }
-
     .date-strip {
       display: flex;
       gap: 8px;
@@ -822,7 +583,6 @@
       padding-bottom: 4px;
       margin: 4px 0 10px;
     }
-
     .date-pill {
       border-radius: 999px;
       padding: 6px 12px;
@@ -832,215 +592,118 @@
       color: var(--text-sub);
       white-space: nowrap;
     }
-
     .date-pill.active {
       background: var(--primary);
       color: #f9fafb;
       border-color: var(--primary);
       font-weight: 500;
     }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 6px 0 10px;
-    }
-
+    .tag-row { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px; }
     .tag {
-      border-radius: 999px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      padding: 4px 10px;
-      font-size: 11px;
-      color: var(--text-sub);
-      background: color-mix(in srgb, var(--bg-soft) 60%, var(--card-bg) 40%);
+      border-radius:999px;
+      border:1px solid rgba(209,213,219,0.9);
+      padding:4px 10px;
+      font-size:11px;
+      color:var(--text-sub);
+      background:color-mix(in srgb, var(--bg-soft) 60%, var(--card-bg) 40%);
     }
+    .card-actions-row { display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; }
 
-    .card-actions-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 6px;
-      flex-wrap: wrap;
-    }
-
-    .chip-grid {
-      display: flex;
-      gap: 10px;
-      margin: 10px 0 6px;
-      flex-wrap: wrap;
-    }
-
+    .chip-grid { display:flex; gap:10px; margin:10px 0 6px; flex-wrap:wrap; }
     .chip-icon {
-      flex: 1;
-      min-width: 80px;
-      text-align: center;
-      padding: 10px 4px;
-      border-radius: 18px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      font-size: 11px;
-      color: var(--text-sub);
-      background: color-mix(in srgb, var(--bg-soft) 60%, var(--card-bg) 40%);
+      flex:1; min-width:80px; text-align:center;
+      padding:10px 4px;
+      border-radius:18px;
+      border:1px solid rgba(209,213,219,0.9);
+      font-size:11px;
+      color:var(--text-sub);
+      background:color-mix(in srgb, var(--bg-soft) 60%, var(--card-bg) 40%);
     }
-
     .chip-icon.active {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-      color: var(--text-main);
-      font-weight: 500;
+      border-color:var(--accent);
+      background:var(--accent-soft);
+      color:var(--text-main);
+      font-weight:500;
     }
 
-    .input-row {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .input-label {
-      font-size: 11px;
-      color: var(--text-sub);
-    }
-
+    .input-row { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+    .input-label { font-size:11px; color:var(--text-sub); }
     .input-field {
-      border-radius: 14px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      padding: 9px 12px;
-      font-size: 13px;
-      width: 100%;
-      background: color-mix(in srgb, var(--bg-soft) 70%, var(--card-bg) 30%);
-      color: var(--text-main);
+      border-radius:14px;
+      border:1px solid rgba(209,213,219,0.9);
+      padding:9px 12px;
+      font-size:13px;
+      width:100%;
+      background:color-mix(in srgb, var(--bg-soft) 70%, var(--card-bg) 30%);
+      color:var(--text-main);
     }
-
-    .two-col {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .pill-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-      flex-wrap: wrap;
-    }
+    .two-col { display:flex; gap:8px; margin-top:8px; }
+    .pill-row { display:flex; gap:8px; margin-top:4px; flex-wrap:wrap; }
 
     .summary-bar {
-      margin-top: 12px;
-      border-radius: 16px;
-      padding: 9px 12px;
-      font-size: 12px;
-      background: var(--accent-soft);
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-top:12px;
+      border-radius:16px;
+      padding:9px 12px;
+      font-size:12px;
+      background:var(--accent-soft);
+      color:var(--text-main);
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .summary-bar span { font-size:16px; }
+
+    .progress-track{
+      width:100%;height:7px;border-radius:999px;
+      background:rgba(209,213,219,0.8);overflow:hidden;
+    }
+    .progress-fill{ height:100%;width:72%;background:var(--accent); }
+
+    .group-header{
+      display:flex;justify-content:space-between;
+      align-items:center;font-size:13px;margin-bottom:8px;
+    }
+    .checklist{ margin-top:4px;font-size:13px; }
+    .check-item{
+      display:flex;align-items:center;gap:8px;margin:4px 0;
+    }
+    .check-item input{ width:16px;height:16px;accent-color:var(--primary); }
+
+    /* 底部 nav */
+    .bottom-nav-wrap{
+      position:fixed;bottom:10px;left:50%;
+      transform:translateX(-50%);
+      width:100%;max-width:480px;
+      padding:0 18px;z-index:30;pointer-events:none;
+    }
+    .bottom-nav{
+      pointer-events:auto;
+      background:color-mix(in srgb, var(--card-bg) 90%, var(--bg-soft) 10%);
+      border-radius:999px;
+      box-shadow:0 20px 45px rgba(15,23,42,0.22);
+      border:1px solid rgba(209,213,219,0.9);
+      display:flex;justify-content:space-around;
+      padding:8px 14px;
+    }
+    .bottom-item{
+      flex:1;display:flex;flex-direction:column;
+      align-items:center;gap:3px;font-size:10px;color:var(--text-sub);
+    }
+    .bottom-item-icon{
+      width:34px;height:34px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:17px;background:transparent;
+    }
+    .bottom-item.active .bottom-item-icon{
+      background:var(--primary);color:#f9fafb;
+    }
+    .bottom-item.active{
+      color:var(--text-main);font-weight:500;
     }
 
-    .summary-bar span {
-      font-size: 16px;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(209, 213, 219, 0.8);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 72%;
-      background: var(--accent);
-    }
-
-    .group-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .checklist {
-      margin-top: 4px;
-      font-size: 13px;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 4px 0;
-    }
-
-    .check-item input {
-      width: 16px;
-      height: 16px;
-      accent-color: var(--primary);
-    }
-
-    /* ========================
-       底部圓角 Nav（韓式）
-    ========================= */
-    .bottom-nav-wrap {
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 480px;
-      padding: 0 18px;
-      z-index: 30;
-      pointer-events: none;
-    }
-
-    .bottom-nav {
-      pointer-events: auto;
-      background: color-mix(in srgb, var(--card-bg) 90%, var(--bg-soft) 10%);
-      border-radius: 999px;
-      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22);
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 14px;
-    }
-
-    .bottom-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      font-size: 10px;
-      color: var(--text-sub);
-    }
-
-    .bottom-item-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 17px;
-      background: transparent;
-    }
-
-    .bottom-item.active .bottom-item-icon {
-      background: var(--primary);
-      color: #f9fafb;
-    }
-
-    .bottom-item.active {
-      color: var(--text-main);
-      font-weight: 500;
-    }
-
-    /* 動畫 */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn{
+      from{opacity:0;transform:translateY(4px);}
+      to{opacity:1;transform:translateY(0);}
     }
 
     @media (prefers-color-scheme: dark) {
@@ -1085,7 +748,7 @@
       </div>
     </header>
 
-    <!-- 上方分頁 -->
+    <!-- Tabs -->
     <div class="top-tabs">
       <div class="top-tab active" data-tab="home">首頁</div>
       <div class="top-tab" data-tab="trip">行程</div>
@@ -1094,9 +757,9 @@
     </div>
 
     <main>
-      <!-- 首頁 Page -->
+      <!-- 首頁 -->
       <section class="page active" id="page-home">
-        <!-- 匯率試算 -->
+        <!-- 匯率 -->
         <div class="card card-hero">
           <div class="rate-title-row">
             <div class="rate-title-left">
@@ -1106,20 +769,12 @@
               </div>
               <div class="rate-subtitle">TODAY EXCHANGE SNAPSHOT</div>
             </div>
-
-            <!-- 模式切換 -->
             <label class="rate-switch">
               <input type="checkbox" id="rateModeToggle" />
               <span class="rate-switch-track">
                 <span class="rate-switch-thumb"></span>
-                <span
-                  class="rate-switch-label rate-switch-label-left"
-                  id="labelLive"
-                >即時</span>
-                <span
-                  class="rate-switch-label rate-switch-label-right"
-                  id="labelCustom"
-                >自訂</span>
+                <span class="rate-switch-label rate-switch-label-left" id="labelLive">即時</span>
+                <span class="rate-switch-label rate-switch-label-right" id="labelCustom">自訂</span>
               </span>
             </label>
           </div>
@@ -1127,77 +782,50 @@
           <div class="custom-rate-row" id="customRateRow">
             <span>自訂匯率</span>
             <span>1 TWD ≈</span>
-            <input
-              id="customRateInput"
-              type="number"
-              step="0.01"
-              placeholder="45.00"
-            />
+            <input id="customRateInput" type="number" step="0.01" placeholder="45.00" />
             <span>KRW</span>
           </div>
 
           <div class="rate-body">
             <div class="rate-col">
               <div class="rate-label">KRW · 韓幣</div>
-              <input
-                id="krwInput"
-                class="rate-input-field"
-                type="number"
-                inputmode="decimal"
-                placeholder="0"
-              />
+              <input id="krwInput" class="rate-input-field" type="number" inputmode="decimal" placeholder="0" />
               <div class="rate-line"></div>
             </div>
-
             <div class="rate-equal">＝</div>
-
             <div class="rate-col" style="text-align:right;">
               <div class="rate-label">TWD · 台幣</div>
-              <input
-                id="twdInput"
-                class="rate-input-field rate-input-right"
-                type="number"
-                inputmode="decimal"
-                placeholder="0"
-              />
+              <input id="twdInput" class="rate-input-field rate-input-right" type="number" inputmode="decimal" placeholder="0" />
               <div class="rate-line"></div>
             </div>
           </div>
 
           <div class="rate-footer">
             <div class="sub-text" id="rateText">匯率載入中…</div>
-            <button class="pill-outline small" id="refreshRateBtn">
-              匯率刷新
-            </button>
+            <button class="pill-outline small" id="refreshRateBtn">匯率刷新</button>
           </div>
         </div>
 
-        <!-- 一週天氣（即時資料 + 線條 icon） -->
+        <!-- 天氣 -->
         <div class="card" id="weatherCard">
           <div class="weather-header">
             <div class="weather-header-title">Seoul · Weekly Outlook</div>
             <div class="sub-text" id="weatherLocationText">資料載入中…</div>
           </div>
           <div class="weather-row" id="weatherRow">
-            <div class="sub-text" style="flex:1;text-align:center;">
-              取得天氣資料中…
-            </div>
+            <div class="sub-text" style="flex:1;text-align:center;">取得天氣資料中…</div>
           </div>
         </div>
 
-        <!-- 入境 / 自駕 segment -->
+        <!-- segment -->
         <div class="segment-wrap">
           <div class="segment">
-            <button class="segment-btn active">
-              ✈️ 入境模式
-            </button>
-            <button class="segment-btn">
-              🚗 自駕模式
-            </button>
+            <button class="segment-btn active">✈️ 入境模式</button>
+            <button class="segment-btn">🚗 自駕模式</button>
           </div>
         </div>
 
-        <!-- Visit Japan Web 卡（示意區） -->
+        <!-- Visit Japan Web 區 -->
         <div class="card">
           <div class="vjw-header">
             <div class="vjw-left">
@@ -1215,7 +843,7 @@
         </div>
       </section>
 
-      <!-- 行程 Page -->
+      <!-- 行程 -->
       <section class="page" id="page-trip">
         <div class="section-title">Daily Plan</div>
         <div class="date-strip">
@@ -1263,7 +891,7 @@
         </div>
       </section>
 
-      <!-- 記帳 Page -->
+      <!-- 記帳 -->
       <section class="page" id="page-money">
         <div class="section-title">Expense Log</div>
         <div class="card">
@@ -1316,8 +944,7 @@
           </div>
 
           <div class="summary-bar">
-            <span>🧮</span>
-            今日累計：簡哥需給你 ₩ 35,810（平分後差額）
+            <span>🧮</span> 今日累計：簡哥需給你 ₩ 35,810（平分後差額）
           </div>
 
           <div style="margin-top: 14px; text-align: right;">
@@ -1326,7 +953,7 @@
         </div>
       </section>
 
-      <!-- 清單 Page -->
+      <!-- 清單 -->
       <section class="page" id="page-list">
         <div class="section-title">Packing Checklist</div>
         <div class="card">
@@ -1398,7 +1025,7 @@
       </section>
     </main>
 
-    <!-- 底部圓角 Nav（目前只是視覺，和上方 tab 同步） -->
+    <!-- bottom nav -->
     <div class="bottom-nav-wrap">
       <div class="bottom-nav">
         <div class="bottom-item active" data-tab-bottom="home">
@@ -1422,7 +1049,7 @@
   </div>
 
   <script>
-    // 上方分頁 + 底部 nav 同步
+    /* tabs 同步 */
     const tabs = document.querySelectorAll(".top-tab");
     const bottomItems = document.querySelectorAll(".bottom-item");
     const pages = {
@@ -1433,30 +1060,17 @@
     };
 
     function activateTab(key) {
-      tabs.forEach((t) => {
-        t.classList.toggle("active", t.dataset.tab === key);
-      });
-      bottomItems.forEach((b) => {
-        b.classList.toggle("active", b.dataset.tabBottom === key);
-      });
-      Object.entries(pages).forEach(([k, p]) => {
-        p.classList.toggle("active", k === key);
-      });
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === key));
+      bottomItems.forEach(b => b.classList.toggle("active", b.dataset.tabBottom === key));
+      Object.entries(pages).forEach(([k, p]) => p.classList.toggle("active", k === key));
     }
+    tabs.forEach(tab => tab.addEventListener("click", () => activateTab(tab.dataset.tab)));
+    bottomItems.forEach(item => item.addEventListener("click", () => activateTab(item.dataset.tabBottom)));
 
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", () => activateTab(tab.dataset.tab));
-    });
-
-    bottomItems.forEach((item) => {
-      item.addEventListener("click", () => activateTab(item.dataset.tabBottom));
-    });
-
-    // 主題切換：原色 → Lilac → Midnight
+    /* 主題切換 */
     const themeBtn = document.getElementById("themeBtn");
     const themes = ["default", "lilac", "midnight"];
     let themeIndex = 0;
-
     function applyTheme() {
       const key = themes[themeIndex];
       if (key === "default") {
@@ -1476,7 +1090,7 @@
       applyTheme();
     });
 
-    // 匯率相關
+    /* 匯率 */
     const krwInput = document.getElementById("krwInput");
     const twdInput = document.getElementById("twdInput");
     const rateText = document.getElementById("rateText");
@@ -1487,20 +1101,18 @@
     const labelLive = document.getElementById("labelLive");
     const labelCustom = document.getElementById("labelCustom");
 
-    let liveRateTWDToKRW = 45.0; // 1 TWD → ? KRW
+    let liveRateTWDToKRW = 45.0;
     let rateTWDToKRW = liveRateTWDToKRW;
     let rateMode = "live";
     let isUpdating = false;
 
     function updateRateText() {
       if (rateMode === "live") {
-        rateText.textContent =
-          "目前使用即時匯率：約 1 TWD ≈ " + rateTWDToKRW.toFixed(2) + " KRW";
+        rateText.textContent = "目前使用即時匯率：約 1 TWD ≈ " + rateTWDToKRW.toFixed(2) + " KRW";
       } else {
         rateText.textContent = "";
       }
     }
-
     function updateSwitchLabels() {
       if (rateMode === "live") {
         labelLive.style.opacity = 0;
@@ -1510,7 +1122,6 @@
         labelCustom.style.opacity = 0;
       }
     }
-
     function applyModeUI() {
       if (rateMode === "live") {
         customRateRow.style.display = "none";
@@ -1525,11 +1136,9 @@
       updateSwitchLabels();
       recalcFromInputs();
     }
-
     function recalcFromInputs() {
       const vK = parseFloat(krwInput.value);
       const vT = parseFloat(twdInput.value);
-
       if (!isNaN(vK)) {
         isUpdating = true;
         twdInput.value = (vK / rateTWDToKRW).toFixed(0);
@@ -1540,17 +1149,14 @@
         isUpdating = false;
       }
     }
-
     async function fetchRate() {
       try {
         rateText.textContent = "匯率載入中…";
         const res = await fetch("https://open.er-api.com/v6/latest/KRW");
         const data = await res.json();
-
         if (data && data.result === "success" && data.rates && data.rates.TWD) {
-          const twdPerKrw = data.rates.TWD; // 1 KRW = twdPerKrw TWD
-          liveRateTWDToKRW = 1 / twdPerKrw; // 1 TWD = ? KRW
-
+          const twdPerKrw = data.rates.TWD;
+          liveRateTWDToKRW = 1 / twdPerKrw;
           if (rateMode === "live") {
             rateTWDToKRW = liveRateTWDToKRW;
             updateRateText();
@@ -1566,32 +1172,23 @@
         rateText.textContent = "匯率載入失敗，使用預設匯率。";
       }
     }
-
     fetchRate();
     applyModeUI();
 
-    refreshRateBtn.addEventListener("click", () => {
-      fetchRate();
-    });
-
+    refreshRateBtn.addEventListener("click", () => { fetchRate(); });
     rateModeToggle.addEventListener("change", () => {
       rateMode = rateModeToggle.checked ? "custom" : "live";
-
       if (rateMode === "custom") {
         if (!customRateInput.value) {
           customRateInput.value = liveRateTWDToKRW.toFixed(2);
         }
         const v = parseFloat(customRateInput.value);
-        if (!isNaN(v) && v > 0) {
-          rateTWDToKRW = v;
-        }
+        if (!isNaN(v) && v > 0) rateTWDToKRW = v;
       } else {
         rateTWDToKRW = liveRateTWDToKRW;
       }
-
       applyModeUI();
     });
-
     customRateInput.addEventListener("input", () => {
       if (rateMode !== "custom") return;
       const v = parseFloat(customRateInput.value);
@@ -1599,7 +1196,6 @@
       rateTWDToKRW = v;
       recalcFromInputs();
     });
-
     krwInput.addEventListener("input", () => {
       if (isUpdating) return;
       const v = parseFloat(krwInput.value);
@@ -1613,7 +1209,6 @@
       twdInput.value = (v / rateTWDToKRW).toFixed(0);
       isUpdating = false;
     });
-
     twdInput.addEventListener("input", () => {
       if (isUpdating) return;
       const v = parseFloat(twdInput.value);
@@ -1628,19 +1223,72 @@
       isUpdating = false;
     });
 
-    // ---------- 天氣：抓取首爾官方開放資料 (Open-Meteo) + 線條 icon ----------
+    /* 天氣：Open-Meteo + SVG icons */
     const weatherLocationText = document.getElementById("weatherLocationText");
     const weatherRow = document.getElementById("weatherRow");
 
-    function mapWeatherIconClass(code) {
-      if (code === 0) return "icon-sun"; // clear
-      if ([1, 2].includes(code)) return "icon-partly"; // mainly clear
-      if ([3, 45, 48].includes(code)) return "icon-cloud"; // cloudy / fog
-      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code))
-        return "icon-rain"; // rain
-      if ([71, 73, 75, 77, 85, 86].includes(code)) return "icon-snow"; // snow
-      if ([95, 96, 99].includes(code)) return "icon-storm"; // thunder
-      return "icon-partly";
+    function getWeatherIconSvg(code) {
+      // 0: 晴, 1-2: 晴時多雲, 3/45/48: 多雲/霧
+      if (code === 0) {
+        return `
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="12" y1="2" x2="12" y2="4"></line>
+            <line x1="12" y1="20" x2="12" y2="22"></line>
+            <line x1="4" y1="12" x2="6" y2="12"></line>
+            <line x1="18" y1="12" x2="20" y2="12"></line>
+            <line x1="5" y1="5" x2="6.5" y2="6.5"></line>
+            <line x1="17.5" y1="17.5" x2="19" y2="19"></line>
+            <line x1="5" y1="19" x2="6.5" y2="17.5"></line>
+            <line x1="17.5" y1="6.5" x2="19" y2="5"></line>
+          </svg>`;
+      }
+      if ([1, 2].includes(code)) {
+        // sun + cloud
+        return `
+          <svg viewBox="0 0 24 24">
+            <circle cx="8" cy="8" r="3"></circle>
+            <line x1="8" y1="2" x2="8" y2="3.5"></line>
+            <line x1="8" y1="12.5" x2="8" y2="14"></line>
+            <line x1="3" y1="8" x2="4.5" y2="8"></line>
+            <line x1="11.5" y1="8" x2="13" y2="8"></line>
+            <path d="M8 16h7a3 3 0 0 0 0-6 4 4 0 0 0-7.5 1"></path>
+          </svg>`;
+      }
+      if ([3, 45, 48].includes(code)) {
+        // cloud
+        return `
+          <svg viewBox="0 0 24 24">
+            <path d="M6 17h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 17z"></path>
+          </svg>`;
+      }
+      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
+        // rain
+        return `
+          <svg viewBox="0 0 24 24">
+            <path d="M6 15h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 15z"></path>
+            <line x1="9" y1="16.5" x2="7.5" y2="19"></line>
+            <line x1="12" y1="17" x2="10.5" y2="19.5"></line>
+            <line x1="15" y1="16.5" x2="13.5" y2="19"></line>
+          </svg>`;
+      }
+      if ([71, 73, 75, 77, 85, 86].includes(code)) {
+        // snow
+        return `
+          <svg viewBox="0 0 24 24">
+            <path d="M6 15h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 15z"></path>
+            <line x1="9" y1="17" x2="9" y2="19"></line>
+            <line x1="8" y1="18" x2="10" y2="18"></line>
+            <line x1="14" y1="17" x2="14" y2="19"></line>
+            <line x1="13" y1="18" x2="15" y2="18"></line>
+          </svg>`;
+      }
+      // thunder
+      return `
+        <svg viewBox="0 0 24 24">
+          <path d="M6 14h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 14z"></path>
+          <polyline points="11 15 9.5 19 13 18 11.5 22"></polyline>
+        </svg>`;
     }
 
     async function fetchWeather() {
@@ -1649,16 +1297,12 @@
         weatherRow.innerHTML =
           `<div class="sub-text" style="flex:1;text-align:center;">取得天氣資料中…</div>`;
 
-        // 首爾市中心座標：37.57, 126.98
         const url =
           "https://api.open-meteo.com/v1/forecast?latitude=37.57&longitude=126.98&daily=weathercode,temperature_2m_max&timezone=Asia%2FSeoul";
 
         const res = await fetch(url);
         const data = await res.json();
-
-        if (!data.daily || !data.daily.time) {
-          throw new Error("No daily weather");
-        }
+        if (!data.daily || !data.daily.time) throw new Error("No daily weather");
 
         const days = data.daily;
         const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -1670,19 +1314,18 @@
           const label = dayNames[d.getUTCDay()];
           const temp = Math.round(days.temperature_2m_max[i]);
           const code = days.weathercode[i];
-          const iconClass = mapWeatherIconClass(code);
-          const accentClass = i === 0 ? "weather-icon-accent" : "";
+          const svg = getWeatherIconSvg(code);
+          const accentClass = i === 0 ? "weather-icon-svg accent" : "weather-icon-svg";
 
           const dayDiv = document.createElement("div");
           dayDiv.className = "weather-day";
           dayDiv.innerHTML = `
             <div>${label}</div>
-            <div class="weather-icon ${iconClass} ${accentClass}"></div>
+            <div class="${accentClass}">${svg}</div>
             <div class="weather-temp">${temp}°</div>
           `;
           weatherRow.appendChild(dayDiv);
         }
-
         weatherLocationText.textContent = "資料來源：Open-Meteo · Seoul / KR";
       } catch (e) {
         console.error(e);
@@ -1694,7 +1337,7 @@
 
     fetchWeather();
 
-    // 鎖縮放（iOS Safari）
+    /* 鎖縮放（iOS） */
     (function lockZoom() {
       const vp = document.querySelector('meta[name="viewport"]');
       if (vp) {
@@ -1703,41 +1346,15 @@
           "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         );
       }
-
-      document.addEventListener(
-        "gesturestart",
-        function (e) {
-          e.preventDefault();
-        },
-        { passive: false }
-      );
-      document.addEventListener(
-        "gesturechange",
-        function (e) {
-          e.preventDefault();
-        },
-        { passive: false }
-      );
-      document.addEventListener(
-        "gestureend",
-        function (e) {
-          e.preventDefault();
-        },
-        { passive: false }
-      );
-
+      document.addEventListener("gesturestart", e => e.preventDefault(), { passive: false });
+      document.addEventListener("gesturechange", e => e.preventDefault(), { passive: false });
+      document.addEventListener("gestureend", e => e.preventDefault(), { passive: false });
       let lastTouchEnd = 0;
-      document.addEventListener(
-        "touchend",
-        function (e) {
-          const now = Date.now();
-          if (now - lastTouchEnd <= 300) {
-            e.preventDefault();
-          }
-          lastTouchEnd = now;
-        },
-        { passive: false }
-      );
+      document.addEventListener("touchend", e => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) e.preventDefault();
+        lastTouchEnd = now;
+      }, { passive: false });
     })();
   </script>
 </body>
