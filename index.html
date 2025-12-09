@@ -457,7 +457,6 @@
     }
     .weather-day { flex: 1; }
 
-    /* 新的 SVG icon 容器 */
     .weather-icon-svg {
       width: 26px;
       height: 26px;
@@ -1228,7 +1227,7 @@
     const weatherRow = document.getElementById("weatherRow");
 
     function getWeatherIconSvg(code) {
-      // 0: 晴, 1-2: 晴時多雲, 3/45/48: 多雲/霧
+      // 0: 晴
       if (code === 0) {
         return `
           <svg viewBox="0 0 24 24">
@@ -1243,27 +1242,29 @@
             <line x1="17.5" y1="6.5" x2="19" y2="5"></line>
           </svg>`;
       }
+      // 1–2: 晴時多雲（重畫：左上小太陽 + 一條柔順雲）
       if ([1, 2].includes(code)) {
-        // sun + cloud
         return `
           <svg viewBox="0 0 24 24">
-            <circle cx="8" cy="8" r="3"></circle>
-            <line x1="8" y1="2" x2="8" y2="3.5"></line>
-            <line x1="8" y1="12.5" x2="8" y2="14"></line>
-            <line x1="3" y1="8" x2="4.5" y2="8"></line>
-            <line x1="11.5" y1="8" x2="13" y2="8"></line>
-            <path d="M8 16h7a3 3 0 0 0 0-6 4 4 0 0 0-7.5 1"></path>
+            <!-- 小太陽 -->
+            <circle cx="7" cy="7" r="3"></circle>
+            <line x1="7" y1="2" x2="7" y2="3.5"></line>
+            <line x1="7" y1="10.5" x2="7" y2="12"></line>
+            <line x1="2" y1="7" x2="3.5" y2="7"></line>
+            <line x1="10.5" y1="7" x2="12" y2="7"></line>
+            <!-- 柔順雲線 -->
+            <path d="M7 16h8a3 3 0 0 0 0-6 4.2 4.2 0 0 0-7.6-1.7" />
           </svg>`;
       }
+      // 3/45/48: 多雲/霧
       if ([3, 45, 48].includes(code)) {
-        // cloud
         return `
           <svg viewBox="0 0 24 24">
             <path d="M6 17h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 17z"></path>
           </svg>`;
       }
+      // 雨
       if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
-        // rain
         return `
           <svg viewBox="0 0 24 24">
             <path d="M6 15h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 15z"></path>
@@ -1272,8 +1273,8 @@
             <line x1="15" y1="16.5" x2="13.5" y2="19"></line>
           </svg>`;
       }
+      // 雪
       if ([71, 73, 75, 77, 85, 86].includes(code)) {
-        // snow
         return `
           <svg viewBox="0 0 24 24">
             <path d="M6 15h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 15z"></path>
@@ -1283,7 +1284,7 @@
             <line x1="13" y1="18" x2="15" y2="18"></line>
           </svg>`;
       }
-      // thunder
+      // 雷雨
       return `
         <svg viewBox="0 0 24 24">
           <path d="M6 14h10a3 3 0 0 0 0-6 4.5 4.5 0 0 0-8.7-1.5A3.5 3.5 0 0 0 6 14z"></path>
