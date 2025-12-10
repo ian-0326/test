@@ -162,6 +162,7 @@
       font-size: 11px;
       color: var(--text-main);
       border: 1px solid rgba(148, 163, 184, 0.3);
+      cursor: pointer;
     }
     .icon-btn span { font-size: 15px; }
 
@@ -632,7 +633,7 @@
       cursor:pointer;
     }
 
-    /* Visit Japan Web 舊樣式（暫不用，若未來要用可參考） */
+    /* Visit Japan Web 舊樣式（如果未來要用可以沿用） */
     .vjw-header {
       display: flex;
       justify-content: space-between;
@@ -1578,23 +1579,15 @@
         entryCard.style.display = "block";
         lostCard.style.display = "none";
       } else {
-        entryCard.style.display = "block"; // 仍保留在 DOM 中，只是下方切換卡片
+        entryCard.style.display = "none";
         lostCard.style.display = "block";
       }
     }
 
     modeButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        if (btn.dataset.mode === "entry") {
-          entryCard.style.display = "block";
-          lostCard.style.display = "none";
-        } else {
-          entryCard.style.display = "none";
-          lostCard.style.display = "block";
-        }
-        modeButtons.forEach(b => b.classList.toggle("active", b === btn));
-      });
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
     });
+    setMode("entry");
 
     /* 走失模式 · 旅伴定位（前端 prototype）*/
     const locateBtn = document.getElementById("locateBtn");
@@ -1702,7 +1695,7 @@
 
     loadLocationFeed();
 
-    /* 入境模式：旅伴 + 入境卡 */
+    /* 入境模式：旅伴 + 入境卡（localStorage 永續化） */
     const travelerList = document.getElementById("travelerList");
     const addTravelerBtn = document.getElementById("addTravelerBtn");
     const nameModal = document.getElementById("nameModal");
@@ -1712,6 +1705,76 @@
 
     let travelerIdCounter = 0;
     let travelers = [];
+
+    const TRAVELER_KEY = "ktm_travelers";
+
+    function saveTravelers() {
+      try {
+        localStorage.setItem(TRAVELER_KEY, JSON.stringify(travelers));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderTravelers() {
+      travelerList.innerHTML = "";
+      if (!travelers.length) {
+        const empty = document.createElement("div");
+        empty.className = "sub-text";
+        empty.textContent = "目前尚未新增任何旅伴。";
+        travelerList.appendChild(empty);
+        return;
+      }
+      travelers.forEach(t => {
+        travelerList.appendChild(createTravelerElement(t));
+      });
+    }
+
+    function loadTravelers() {
+      try {
+        const raw = localStorage.getItem(TRAVELER_KEY);
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr) && arr.length > 0) {
+            travelers = arr.map(t => ({
+              id: t.id || "",
+              name: t.name || "旅伴",
+              image: t.image || null,
+            }));
+            // 重新計算 id counter
+            travelerIdCounter = travelers.reduce((max, t) => {
+              const m = (t.id || "").match(/(\d+)$/);
+              if (!m) return max;
+              const n = parseInt(m[1], 10);
+              return Number.isNaN(n) ? max : Math.max(max, n);
+            }, 0);
+            renderTravelers();
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      // 若沒有資料，建立預設「我」
+      travelers = [
+        {
+          id: "traveler_1",
+          name: "我",
+          image: null,
+        },
+      ];
+      travelerIdCounter = 1;
+      renderTravelers();
+      saveTravelers();
+    }
+
+    function addTraveler(name) {
+      const id = "traveler_" + (++travelerIdCounter);
+      const t = { id, name, image: null };
+      travelers.push(t);
+      saveTravelers();
+      renderTravelers();
+    }
 
     function openNameModal() {
       nameModal.style.display = "flex";
@@ -1798,6 +1861,7 @@
           traveler.image = url;
           preview.innerHTML = `<img src="${url}" alt="入境卡預覽" />`;
           statusText.textContent = "已上傳入境卡圖片";
+          saveTravelers();
         };
         reader.readAsDataURL(file);
       });
@@ -1805,31 +1869,8 @@
       return wrapper;
     }
 
-    function renderTravelers() {
-      travelerList.innerHTML = "";
-      travelers.forEach(t => {
-        travelerList.appendChild(createTravelerElement(t));
-      });
-      if (!travelers.length) {
-        const empty = document.createElement("div");
-        empty.className = "sub-text";
-        empty.textContent = "目前尚未新增任何旅伴。";
-        travelerList.appendChild(empty);
-      }
-    }
-
-    function addTraveler(name) {
-      const t = {
-        id: "traveler_" + (++travelerIdCounter),
-        name,
-        image: null,
-      };
-      travelers.push(t);
-      renderTravelers();
-    }
-
-    // 初始預設一位「我」
-    addTraveler("我");
+    // 載入旅伴資料（含「我」與上傳圖片）
+    loadTravelers();
 
     /* 鎖縮放（iOS） */
     (function lockZoom() {
