@@ -569,8 +569,16 @@
     .traveler-head{
       display:flex;
       align-items:center;
-      gap:10px;
+      justify-content:space-between;
       margin-bottom:8px;
+      gap:10px;
+    }
+    .traveler-head-main{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:1;
+      min-width:0;
     }
     .traveler-avatar{
       width:40px;
@@ -623,11 +631,15 @@
     .entry-preview-placeholder{
       font-size:11px;
       color:var(--text-sub);
+      padding:10px 6px;
+      text-align:center;
     }
     .entry-upload-actions{
       margin-top:8px;
       display:flex;
-      justify-content:flex-end;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
     }
     .entry-upload-actions label{
       cursor:pointer;
@@ -1673,7 +1685,7 @@
 
     loadLocationFeed();
 
-    /* 入境模式：旅伴 + 入境卡（localStorage 永續化） */
+    /* 入境模式：旅伴 + 入境卡（localStorage 永續化＋刪除功能） */
     const travelerList = document.getElementById("travelerList");
     const addTravelerBtn = document.getElementById("addTravelerBtn");
     const nameModal = document.getElementById("nameModal");
@@ -1685,6 +1697,8 @@
     let travelers = [];
 
     const TRAVELER_KEY = "ktm_travelers";
+    const ENTRY_PLACEHOLDER_HTML =
+      `<span class="entry-preview-placeholder">尚未選擇圖片 · 可用來放 QR 截圖或拍照</span>`;
 
     function saveTravelers() {
       try {
@@ -1794,22 +1808,25 @@
 
       wrapper.innerHTML = `
         <div class="traveler-head">
-          <div class="traveler-avatar">
-            <span>${initials}</span>
-          </div>
-          <div class="traveler-info">
-            <div class="traveler-name">${traveler.name}</div>
-            <div class="sub-text" data-role="status">
-              ${traveler.image ? "已上傳入境卡圖片" : "入境卡尚未上傳"}
+          <div class="traveler-head-main">
+            <div class="traveler-avatar">
+              <span>${initials}</span>
+            </div>
+            <div class="traveler-info">
+              <div class="traveler-name">${traveler.name}</div>
+              <div class="sub-text" data-role="status">
+                ${traveler.image ? "已上傳入境卡圖片" : "入境卡尚未上傳"}
+              </div>
             </div>
           </div>
+          <button class="pill-outline small delete-traveler-btn" type="button">刪除人物</button>
         </div>
         <div class="entry-upload">
           <div class="entry-preview" data-role="preview">
             ${
               traveler.image
                 ? `<img src="${traveler.image}" alt="入境卡預覽" />`
-                : `<span class="entry-preview-placeholder">尚未選擇圖片 · 可用來放 QR 截圖或拍照</span>`
+                : ENTRY_PLACEHOLDER_HTML
             }
           </div>
           <div class="entry-upload-actions">
@@ -1822,6 +1839,7 @@
                 hidden
               />
             </label>
+            <button class="pill-outline small delete-image-btn" type="button">刪除圖片</button>
           </div>
         </div>
       `;
@@ -1829,7 +1847,10 @@
       const fileInput = wrapper.querySelector(".entry-file-input");
       const preview = wrapper.querySelector('[data-role="preview"]');
       const statusText = wrapper.querySelector('[data-role="status"]');
+      const deleteImageBtn = wrapper.querySelector(".delete-image-btn");
+      const deleteTravelerBtn = wrapper.querySelector(".delete-traveler-btn");
 
+      // 上傳圖片（拍照 / 相簿）
       fileInput.addEventListener("change", () => {
         const file = fileInput.files && fileInput.files[0];
         if (!file) return;
@@ -1867,6 +1888,29 @@
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
+      });
+
+      // 刪除圖片
+      deleteImageBtn.addEventListener("click", () => {
+        if (!traveler.image) {
+          // 沒有圖片時就單純 reset UI
+          preview.innerHTML = ENTRY_PLACEHOLDER_HTML;
+          statusText.textContent = "入境卡尚未上傳";
+          return;
+        }
+        traveler.image = null;
+        preview.innerHTML = ENTRY_PLACEHOLDER_HTML;
+        statusText.textContent = "入境卡尚未上傳";
+        saveTravelers();
+      });
+
+      // 刪除人物
+      deleteTravelerBtn.addEventListener("click", () => {
+        const ok = confirm(`確定要刪除「${traveler.name}」嗎？\n（此旅伴的入境卡圖片也會一併刪除）`);
+        if (!ok) return;
+        travelers = travelers.filter(t => t.id !== traveler.id);
+        saveTravelers();
+        renderTravelers();
       });
 
       return wrapper;
