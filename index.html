@@ -633,28 +633,6 @@
       cursor:pointer;
     }
 
-    /* Visit Japan Web 舊樣式（如果未來要用可以沿用） */
-    .vjw-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      font-size: 14px;
-    }
-    .vjw-left { display: flex; align-items: center; gap: 10px; }
-    .qr-box {
-      width: 28px;
-      height: 28px;
-      border-radius: 10px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      background: radial-gradient(circle at top left, #ffffff 0, #f3f4f6 60%);
-      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-    }
-
     /* 走失模式卡 */
     .lost-header {
       display:flex;
@@ -1713,6 +1691,7 @@
         localStorage.setItem(TRAVELER_KEY, JSON.stringify(travelers));
       } catch (e) {
         console.error(e);
+        alert("旅伴資料無法完整儲存，可能圖片太大或瀏覽器為無痕模式。圖片下次重新整理後可能會消失。");
       }
     }
 
@@ -1839,7 +1818,6 @@
               <input
                 type="file"
                 accept="image/*"
-                capture="environment"
                 class="entry-file-input"
                 hidden
               />
@@ -1855,13 +1833,38 @@
       fileInput.addEventListener("change", () => {
         const file = fileInput.files && fileInput.files[0];
         if (!file) return;
+
         const reader = new FileReader();
         reader.onload = (e) => {
-          const url = e.target.result;
-          traveler.image = url;
-          preview.innerHTML = `<img src="${url}" alt="入境卡預覽" />`;
-          statusText.textContent = "已上傳入境卡圖片";
-          saveTravelers();
+          const img = new Image();
+          img.onload = () => {
+            // 壓縮圖片再存：避免太大佔滿 localStorage
+            const maxW = 900;
+            const maxH = 900;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxW || height > maxH) {
+              const ratio = Math.min(maxW / width, maxH / height);
+              width = width * ratio;
+              height = height * ratio;
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // 壓成 JPEG、品質 0.75
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+
+            traveler.image = dataUrl;
+            preview.innerHTML = `<img src="${dataUrl}" alt="入境卡預覽" />`;
+            statusText.textContent = "已上傳入境卡圖片";
+            saveTravelers();
+          };
+          img.src = e.target.result;
         };
         reader.readAsDataURL(file);
       });
